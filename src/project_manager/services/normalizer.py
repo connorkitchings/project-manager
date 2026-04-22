@@ -115,9 +115,7 @@ class RepoStatusNormalizer:
 
         attention_reasons = []
         if missing_sources:
-            attention_reasons.append(
-                f"Missing docs: {', '.join(missing_sources)}"
-            )
+            attention_reasons.append(f"Missing docs: {', '.join(missing_sources)}")
         if blockers:
             attention_reasons.append("Blockers recorded in project docs.")
         if not current_goal:

@@ -23,10 +23,12 @@
 project-manager/
 ├── .agent/              # Agent instructions, workflows, dynamic memory
 ├── .codex/              # Quick references for terminal-based agents
+├── config/              # tracked_repos.yaml (YAML bootstrap registry)
 ├── docs/                # Product, architecture, and operating documentation
-├── src/                 # Current implementation scaffold
-├── tests/               # Test suite
-├── scripts/             # Utility scripts
+├── scripts/             # Utility scripts (vibe_sync.py session management)
+├── src/project_manager/ # Flask backend (api, core, services, utils, models)
+├── tests/               # Test suite (pytest, 74% coverage)
+├── ui/                  # React/Vite/Tailwind frontend
 └── session_logs/        # Session history
 ```
 

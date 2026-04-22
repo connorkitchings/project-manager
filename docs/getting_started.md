@@ -6,20 +6,24 @@ This guide is for contributors working on Project Manager itself, not for consum
 
 Project Manager is an internal web application for reviewing the status of selected GitHub repositories. The product relies on a consistent set of docs inside each tracked repo and supplements that information with recent GitHub activity.
 
-The codebase still contains template-era scaffolding and names such as `vibe_coding`. Treat those as migration debt, not product truth.
+The backend lives in `src/project_manager/` and the React frontend lives in `ui/`. The template-era `vibe_coding` scaffolding has been removed.
 
 ## Prerequisites
 
 - Python 3.10+
 - `uv`
 - Git
+- Node.js 20+
 
 ## Initial Setup
 
 ```bash
 uv sync
+npm --prefix ui install
 git checkout -b feat/<topic>
 uv run pytest
+npm --prefix ui test
+npm --prefix ui run build
 uv run mkdocs build
 ```
 
@@ -46,7 +50,10 @@ git status
 uv run ruff format .
 uv run ruff check .
 uv run pytest -q
-mkdocs serve
+npm --prefix ui test
+npm --prefix ui run dev     # React dev server (proxy to Flask on :5000)
+uv run flask --app project_manager.api.main run  # Flask API
+uv run mkdocs serve
 ```
 
 ## What To Keep In Mind

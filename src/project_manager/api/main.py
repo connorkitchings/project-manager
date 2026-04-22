@@ -50,11 +50,7 @@ def create_app(sync_service=None, frontend_dir: Path | None = None) -> Flask:
     @app.get("/api/tracked-repos")
     def list_tracked_repos():
         return jsonify(
-            {
-                "tracked_repos": [
-                    repo.to_dict() for repo in service.list_tracked_repos()
-                ]
-            }
+            {"tracked_repos": [repo.to_dict() for repo in service.list_tracked_repos()]}
         )
 
     @app.post("/api/tracked-repos")

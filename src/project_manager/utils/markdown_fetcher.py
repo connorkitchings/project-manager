@@ -386,7 +386,7 @@ def fetch_markdown(
     session = requests.Session()
     session.headers.update(
         {
-            "User-Agent": "Mozilla/5.0 (compatible; VibeCoding/1.0; +https://github.com/connorkitchings/Vibe-Coding)"
+            "User-Agent": "Mozilla/5.0 (compatible; ProjectManager/1.0; +https://github.com/connorkitchings/project-manager)"
         }
     )
 

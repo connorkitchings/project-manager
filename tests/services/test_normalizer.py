@@ -112,6 +112,5 @@ def test_normalizer_flags_missing_docs_and_staleness(tracked_repo):
         in snapshot.attention_reasons
     )
     assert any(
-        "No recent GitHub activity" in reason
-        for reason in snapshot.attention_reasons
+        "No recent GitHub activity" in reason for reason in snapshot.attention_reasons
     )

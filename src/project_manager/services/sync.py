@@ -134,9 +134,7 @@ class RepoSyncService:
             updates["name"] = name.strip() or None if isinstance(name, str) else None
         if notes is not _UNSET:
             assert isinstance(notes, str) or notes is None
-            updates["notes"] = (
-                notes.strip() or None if isinstance(notes, str) else None
-            )
+            updates["notes"] = notes.strip() or None if isinstance(notes, str) else None
         return self.snapshot_store.update_tracked_repo(repo_id, **updates)
 
     def sync_all(self) -> SyncResponse:

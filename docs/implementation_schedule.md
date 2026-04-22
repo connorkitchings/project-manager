@@ -23,7 +23,7 @@ This schedule tracks the first productization work for Project Manager.
 
 | Phase | Task | Owner | Deliverable | Status | Notes |
 |-------|------|-------|-------------|--------|-------|
-| 2.1 | Define normalized repo status fields | Connor | Draft schema / field contract | ☐ Not Started | Keep v1 field set intentionally small |
+| 2.1 | Define normalized repo status fields | Connor | Draft schema / field contract | ✅ Done | Schema implemented in `models.py`, `docs/api/openapi.yaml`, and TypeScript types |
 | 2.2 | Choose required source documents per tracked repo | Connor | Source-of-truth rules | ✅ Done | README, charter, schedule, session logs are the current parser targets |
 | 2.3 | Define freshness and fallback behavior | Connor | Parser rules for missing or stale docs | ✅ Done | Missing docs and unsynced repos now surface as attention states |
 

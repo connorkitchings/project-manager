@@ -114,7 +114,7 @@ The repository began with template-era Python scaffolding, but the first backend
 |----------|-------------------|-------|
 | Product Surface | Web app | Browser-based internal dashboard |
 | Source Integrations | GitHub API + repository file reads | Core inputs for v1 |
-| Backend | Flask | Lightweight API layer that works cleanly in the current Python 3.14 environment |
+| Backend | Flask | Lightweight API layer; CI tests Python 3.10–3.12 |
 | Persistence | SQLite | Stores tracked repos, latest snapshots, and sync run metadata |
 | Configuration | YAML bootstrap + environment variables | `config/tracked_repos.yaml` seeds tracked repos; env vars provide secrets and runtime config |
 | Testing | Pytest | Already present in the repo |

@@ -843,20 +843,15 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "flask" },
-    { name = "pyperclip" },
     { name = "pyyaml" },
     { name = "requests" },
-    { name = "rich" },
-    { name = "typer" },
 ]
 
 [package.optional-dependencies]
-dev = [
-    { name = "mkdocs" },
-    { name = "mkdocs-material" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
+scripts = [
+    { name = "pyperclip" },
+    { name = "rich" },
+    { name = "typer" },
 ]
 security = [
     { name = "bandit" },
@@ -867,36 +862,37 @@ security = [
 dev = [
     { name = "mkdocs" },
     { name = "mkdocs-material" },
+    { name = "pyperclip" },
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "rich" },
     { name = "ruff" },
+    { name = "typer" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "bandit", marker = "extra == 'security'", specifier = ">=1.7.9" },
     { name = "flask", specifier = ">=3.1.0" },
-    { name = "mkdocs", marker = "extra == 'dev'", specifier = ">=1.6.0" },
-    { name = "mkdocs-material", marker = "extra == 'dev'", specifier = ">=9.0" },
-    { name = "pyperclip", specifier = ">=1.8.2" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=5.0.0" },
+    { name = "pyperclip", marker = "extra == 'scripts'", specifier = ">=1.8.2" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.31.0" },
-    { name = "rich", specifier = ">=13.0.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.5.0" },
+    { name = "rich", marker = "extra == 'scripts'", specifier = ">=13.0.0" },
     { name = "safety", marker = "extra == 'security'", specifier = ">=2.3.5" },
-    { name = "typer", specifier = ">=0.9.0" },
+    { name = "typer", marker = "extra == 'scripts'", specifier = ">=0.9.0" },
 ]
-provides-extras = ["dev", "security"]
+provides-extras = ["scripts", "security"]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "mkdocs", specifier = ">=1.6.1" },
     { name = "mkdocs-material", specifier = ">=9.6.11" },
+    { name = "pyperclip", specifier = ">=1.8.2" },
     { name = "pytest", specifier = ">=8.4.2" },
     { name = "pytest-cov", specifier = ">=7.0.0" },
+    { name = "rich", specifier = ">=13.0.0" },
     { name = "ruff", specifier = ">=0.14.3" },
+    { name = "typer", specifier = ">=0.9.0" },
 ]
 
 [[package]]

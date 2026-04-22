@@ -73,9 +73,7 @@ class Settings:
             tracked_repos_file=os.getenv(
                 "PROJECT_MANAGER_TRACKED_REPOS_FILE", "config/tracked_repos.yaml"
             ),
-            frontend_dist_dir=os.getenv(
-                "PROJECT_MANAGER_FRONTEND_DIST_DIR", "ui/dist"
-            ),
+            frontend_dist_dir=os.getenv("PROJECT_MANAGER_FRONTEND_DIST_DIR", "ui/dist"),
             recent_activity_limit=max(
                 1, min(_get_int_env("PROJECT_MANAGER_RECENT_ACTIVITY_LIMIT", 5), 20)
             ),
