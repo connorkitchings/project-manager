@@ -1,37 +1,49 @@
 # Project Brief
 
-## Project Name:
-Vibe Coding Data Science Template
+## Project Name
 
-## Overview:
-The Vibe Coding Data Science Template delivers a production-ready starting point for analytics and machine-learning teams, bundling opinionated tooling, documentation, and automation so projects launch with consistent quality, observability, and reproducibility from day one.
+Project Manager
 
-## Key Objectives:
-- Provide a fully configured repository skeleton aligned with the Vibe Coding System.
-- Enable automated quality gates (linting, testing, security scans) that run locally and in CI.
-- Document workflows, checklists, and decision logs that keep AI + human collaborators aligned.
+## Overview
 
-## Target Audience:
-Data science leads and platform teams who need a reusable, automated foundation for new analytics or ML initiatives.
+Project Manager is a simple internal application for reviewing the status of selected GitHub repositories. It gives one place to understand each tracked project's current goal, recent updates, and overall development posture without opening multiple repos and manually reading scattered docs.
 
-## Key Features/Deliverables:
-- Ready-to-use repo with Prefect flows, data/model stubs, tests, and CI pipeline.
-- Comprehensive documentation site covering standards, playbooks, and templates.
-- Session logging and governance framework to coordinate human and AI contributors.
+## Key Objectives
 
-## Success Metrics:
-- New projects can adopt the template and run all checks within one working day.
-- CI pipeline remains green across template updates and downstream forks.
-- Documentation stays current (≤1 week lag) with changes recorded in changelog and session logs.
+- Provide a curated dashboard of repositories that matter right now.
+- Surface each repo's current goal and high-level status from its project docs.
+- Combine documentation-derived summaries with recent GitHub activity.
+- Make it easy to include or exclude repositories from the dashboard.
 
-## Timeline (High-Level):
-- **Start Date:** 2025-11-04
-- **Target Completion:** 2026-01-31
+## Target Audience
 
-## Stakeholders:
-- Connor Kitchings — Project Lead & Maintainer
-- DataOps Working Group — Validates ingestion, schemas, and data quality patterns
-- DevEx Guild — Owns CI automation and tooling upgrades
+The first audience is a single maintainer or a small trusted internal team managing multiple repos built from the same working template.
 
-## Contact:
-Connor Kitchings (GitHub: `connorkitchings`)
+## Key Features / Deliverables
+
+- Portfolio dashboard of tracked repositories
+- Repo detail view with parsed documentation and recent GitHub activity
+- Curated include/exclude controls
+- Normalized status snapshot across repos using consistent documentation patterns
+
+## Success Metrics
+
+- A tracked repo can be understood in under one minute from the dashboard.
+- The app can refresh status for a curated repo list without manual copy-paste.
+- Project docs remain consistent enough across repos to power useful summaries.
+- Repos that need attention are easier to spot than by scanning GitHub alone.
+
+## Timeline
+
+- **Kickoff:** April 21, 2026
+- **Current focus:** documentation reset and product definition
+- **Next milestone:** define status model and first sync flow
+
+## Stakeholders
+
+- Connor Kitchings - Project lead and primary user
+- Future internal collaborators - reviewers of status quality and workflow usefulness
+
+## Contact
+
+Connor Kitchings (`connorkitchings` on GitHub)

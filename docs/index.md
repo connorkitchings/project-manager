@@ -1,17 +1,27 @@
-# Vibe Coding Documentation
+# Project Manager Documentation
 
-For project overview, setup instructions, and getting started, see the [main README.md](../README.md).
+This documentation set defines the product direction, operating model, and planned architecture for Project Manager.
 
-This documentation site contains the detailed guides and templates for project development:
+## Start Here
 
-## Navigation
+- [Project Brief](./project_brief.md) - Short summary of the product and audience
+- [Project Charter](./project_charter.md) - Scope, user stories, architecture, and assumptions
+- [Implementation Schedule](./implementation_schedule.md) - Current roadmap and next milestones
+- [Getting Started](./getting_started.md) - Contributor onboarding
+- [Runbook](./runbook.md) - Operational notes and troubleshooting
 
-- **[Template Kickoff Guide](./template_starting_guide.md)** - Convert this repository from template to real project
-- **[Project Charter](./project_charter.md)** - Project goals, scope, and technical context
-- **[Implementation Schedule](./implementation_schedule.md)** - Current project timeline and milestones
-- **[Development Standards & Workflow](./development_standards.md)** - Coding standards,
-  review process, and workflow
-- **[Checklists](./checklists.md)** - Quality gates and review checklists
-- **[Knowledge Base](./knowledge_base.md)** - Project decisions and accumulated knowledge
-- **[AI Session Templates](./ai_session_templates.md)** - Templates for starting and ending AI
-  development sessions
+## Reference
+
+- [API Direction](./api/README.md)
+- [System Overview](./architecture/system_overview.md)
+- [Glossary](./glossary.md)
+- [Knowledge Base](./knowledge_base.md)
+- [AI Guide](./ai_guide.md)
+
+## Legacy Template Material
+
+This repository still contains some migration-oriented documents from the original template. They are useful only as cleanup references and should not override the charter or schedule:
+
+- [Repository Transition Guide](./template_starting_guide.md)
+- [Validation Guide](./template_testing_guide.md)
+- [Legacy Cleanup Notes](./template_migration_guide.md)

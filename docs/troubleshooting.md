@@ -421,8 +421,8 @@ uv run mkdocs build --verbose
 # Validate YAML syntax
 python -c "import yaml; yaml.safe_load(open('mkdocs.yml'))"
 
-# Check for broken links
-python scripts/validate_template.py
+# Check for broken links or stale template references
+rg -n "Vibe Coding|Data Science Template|Prefect|MLflow|OpenLineage" README.md docs .agent .codex
 
 # Check all referenced files exist
 # Look for errors like: "File not found: docs/missing_file.md"
@@ -430,7 +430,7 @@ python scripts/validate_template.py
 
 ---
 
-### Problem: Template validation shows warnings
+### Problem: Legacy-reference sweep shows warnings
 
 **Symptoms:**
 - Yellow ⚠ warnings in validation output
@@ -438,13 +438,11 @@ python scripts/validate_template.py
 
 **Solutions:**
 ```bash
-# Run validation
-python scripts/validate_template.py
+# Run the sweep
+rg -n "Vibe Coding|Data Science Template|Prefect|MLflow|OpenLineage" README.md docs .agent .codex
 
 # Check which specific files have issues
-# Warnings are often expected for templates:
-# - Placeholder variables are normal (users fill them in)
-# - Some documentation links may be template paths
+# Some warnings are expected only in explicitly marked legacy docs.
 
 # Fix broken links if they reference real files
 grep -r "\./docs/missing" docs/
@@ -497,7 +495,7 @@ ls session_logs/
 # Create a session log first
 uv run python scripts/vibe_sync.py end
 
-# Check log format matches template
+# Check log format matches the current session log guide
 cat session_logs/TEMPLATE.md
 
 # Verify log was created

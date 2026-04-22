@@ -1,38 +1,54 @@
-# Context Router (ACE Framework)
+# Context Router (Project Manager)
 
-> **Welcome.** This repository utilizes the Agentic Context Engineering (ACE) framework. This document is your routing hub. Do not look for deep project details here—follow the pointers below.
+> Routing hub for the repository. Use this page to orient quickly, then jump to the right source of truth.
 
-## 🗺️ Map of the Repo
+## Current Project Identity
+
+- **Project:** Project Manager
+- **Goal:** Build a simple internal web app for reviewing the status of selected GitHub repositories.
+- **Primary inputs:** repository documentation plus recent GitHub activity
+- **Current phase:** full-stack MVP with React frontend and persisted backend state
+
+## Read Order
+
+1. `README.md` - Product overview and current state
+2. `docs/project_charter.md` - Scope, architecture, and assumptions
+3. `docs/implementation_schedule.md` - Active roadmap
+4. `.agent/skills/CATALOG.md` - Available workflows
+5. Latest file in `session_logs/` - Most recent work context
+
+## Repo Map
 
 ```text
-Vibe-Coding/
-├── .agent/              # 🧠 AI Agent Brain (You are here)
-│   ├── CONTEXT.md       # Context Router (This file)
-│   ├── PLAYBOOK.md      # Dynamic memory: Rules, Strategies, and Patterns
-│   ├── skills/          # Executable workflows and procedures
-│   └── workflows/       # Health checks and CI automation
-├── src/                 # Application source code
-├── tests/               # Pytest suite
-├── docs/                # Architecture, guides, and manuals
-├── scripts/             # Internal utilities and CLI tools
-├── session_logs/        # Historical logs of AI sessions
-└── config/              # Environment and system configs
+project-manager/
+├── .agent/              # Agent instructions, workflows, dynamic memory
+├── .codex/              # Quick references for terminal-based agents
+├── docs/                # Product, architecture, and operating documentation
+├── src/                 # Current implementation scaffold
+├── tests/               # Test suite
+├── scripts/             # Utility scripts
+└── session_logs/        # Session history
 ```
 
-## 🧭 Navigation Instructions
+## Current Truths
 
-- **For Execution & Workflows:** Proceed to `.agent/skills/CATALOG.md` and load the appropriate skill for your task (e.g., `start-session` or `end-session`).
-- **For Project State & Rules:** Read `.agent/PLAYBOOK.md` to understand current strategies, rules, and success patterns.
-- **For Fast Commands:** Review `.codex/QUICKSTART.md`.
-- **For Immediate Context:** Check the latest log in `session_logs/`.
+- The repository began as a generic template, but the active backend now lives under `src/project_manager/`.
+- The frontend lives under `ui/` and is built into assets served by Flask.
+- The product direction is now fixed around a documentation-aware GitHub repo status dashboard.
+- v1 is a single-user internal web app with a curated repo list.
+- Repository docs provide intent; GitHub activity provides corroborating evidence and freshness.
+- Tracked repos bootstrap from `config/tracked_repos.yaml`, and latest snapshots persist in SQLite.
 
----
+## Immediate Focus
 
-## 🔄 Post-Session Protocol
+- Keep docs aligned with the combined Flask + React application that now exists.
+- Tighten the normalized repo status model and stale/attention rules.
+- Expand tracked repo management beyond the seed YAML file.
 
-**MANDATORY BEFORE EXIT:**
-Before concluding any session, the AI agent MUST perform a self-critique and execute the following Reflection Protocol:
+## Post-Session Protocol
 
-1. **Review Actions**: What code was changed? What new patterns emerged?
-2. **Update PLAYBOOK**: If a new Success Pattern, Strategy, or Rule was identified during this session, you MUST append or modify `.agent/PLAYBOOK.md` to persist this learning.
-3. **Log the Session**: Ensure a complete session log is written to `session_logs/` utilizing the `vibe_sync.py end` script or standard ending skills.
+Before ending a session:
+
+1. Review what changed and whether a new pattern should be captured.
+2. Update `.agent/PLAYBOOK.md` if a rule or reusable strategy emerged.
+3. Write a session log in `session_logs/`.

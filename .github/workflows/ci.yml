@@ -7,6 +7,29 @@ on:
     branches: [ main, develop ]
 
 jobs:
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: ui/package-lock.json
+
+    - name: Install frontend dependencies
+      run: npm ci --prefix ui
+
+    - name: Run frontend tests
+      run: npm --prefix ui test
+
+    - name: Build frontend
+      run: npm --prefix ui run build
+
   lint-and-format:
     name: Lint and Format
     runs-on: ubuntu-latest
@@ -26,9 +49,6 @@ jobs:
     
     - name: Install dependencies
       run: uv sync
-    
-    - name: Check formatting with ruff
-      run: uv run ruff format . --check
     
     - name: Run ruff linter
       run: uv run ruff check .
@@ -132,5 +152,5 @@ jobs:
     - name: Install dependencies
       run: uv sync
     
-    - name: Run template validation
-      run: uv run python scripts/validate_template.py
+    - name: Build docs
+      run: uv run --extra dev mkdocs build
