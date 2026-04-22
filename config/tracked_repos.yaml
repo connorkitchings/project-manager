@@ -1,0 +1,25 @@
+tracked_repos:
+  - id: fred
+    name: FRED
+    owner: connorkitchings
+    repo: FRED
+    enabled: true
+    notes: Validation repo with full charter, schedule, and session-log coverage.
+  - id: panicstats
+    name: PanicStats
+    owner: connorkitchings
+    repo: panicstats
+    enabled: true
+    notes: Validation repo with strong README and session logs but no charter/schedule pair.
+  - id: jam-band-nerd
+    name: JamBandNerd
+    owner: connorkitchings
+    repo: JamBandNerd
+    enabled: true
+    notes: Validation repo with a modern README and partial template-era AI workflow footprint.
+  - id: vibe-coding
+    name: Vibe Coding
+    owner: connorkitchings
+    repo: Vibe-Coding
+    enabled: true
+    notes: Template-shaped validation repo that exercises the expected full-doc path.
