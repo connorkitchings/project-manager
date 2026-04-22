@@ -45,10 +45,8 @@ This playbook maintains the evolving knowledge, strategic constraints, and execu
 ### How to Invoke a Review Agent
 
 1. **Select the appropriate agent** from the roster above
-2. **Copy the prompt** from `.agent/VIBE_CRITIQUE_PROMPTS.md`
-3. **Fill in the context** with your specific situation
-4. **Submit to AI** for review
-5. **Save output** to `.agent/reviews/YYYY-MM-DD/N - [Agent] Review.md`
+2. **Prompt the AI** with the agent's role, your specific context, and what you need reviewed
+3. **Save output** to `.agent/reviews/YYYY-MM-DD/N - [Agent] Review.md`
 
 ### When to Run Reviews
 
