@@ -20,6 +20,7 @@ nav:
       - Project Brief: project_brief.md
       - Project Charter: project_charter.md
       - Implementation Schedule: implementation_schedule.md
+      - v2 Roadmap: v2_roadmap.md
       - Getting Started: getting_started.md
   - Architecture:
       - System Overview: architecture/system_overview.md

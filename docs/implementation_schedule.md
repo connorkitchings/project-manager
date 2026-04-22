@@ -59,16 +59,29 @@ This schedule tracks the first productization work for Project Manager.
 |-------|------|-------|-------------|--------|-------|
 | 6.1 | Validate against real repos | Connor + AI Assistant | Parser review across 3-5 repos | ✅ Done | Validation now covers FRED, PanicStats, JamBandNerd, and Vibe-Coding |
 | 6.2 | Tighten UX copy and status language | Connor + AI Assistant | Consistent status taxonomy | ✅ Done | Attention states now expose explicit reasons in both API and UI |
-| 6.3 | Capture v2 decisions | Connor | Follow-up roadmap | ☐ Not Started | Discovery, alerts, generated summaries |
+| 6.3 | Capture v2 decisions | Connor | Follow-up roadmap | ✅ Done | See `docs/v2_roadmap.md` for prioritized feature candidates |
+
+## Phase 7: v2 Development
+
+See `docs/v2_roadmap.md` for full feature descriptions and prioritization rationale.
+
+| Phase | Task | Owner | Deliverable | Status | Notes |
+|-------|------|-------|-------------|--------|-------|
+| 7.1 | Delete / Archive tracked repos | AI Assistant | `DELETE /api/tracked-repos/<id>` + UI | ☐ Not Started | Suggested first — small effort, completes lifecycle |
+| 7.2 | Richer status field contract | Connor + AI Assistant | `RepoStatus` enum, tightened schema | ☐ Not Started | Foundational before building on top of the model |
+| 7.3 | Timeline view | AI Assistant | Merged event timeline on repo detail page | ☐ Not Started | All data already exists; frontend-only |
+| 7.4 | Stale / attention alerts | AI Assistant | Background sync + alert surface | ☐ Not Started | Requires scheduling; defer until status model is solid |
+| 7.5 | GitHub repository discovery | AI Assistant | Search + one-click add UI | ☐ Not Started | GitHub search API integration |
+| 7.6 | Generated summary artifacts | AI Assistant | LLM-based summaries via Claude API | ☐ Not Started | Highest complexity; defer until parsing ceiling is hit |
 
 ## Immediate Next Steps
 
-1. Decide whether tracked repo management needs delete/archive behavior or GitHub discovery support.
-2. Keep expanding parser coverage as new real repo patterns appear.
-3. Capture the first explicit v2 roadmap decisions.
+1. Start Phase 7.1 (delete/archive) — small effort, completes the tracked repo lifecycle.
+2. Discuss the `RepoStatus` enum contract before committing to Phase 7.2 changes.
+3. Keep expanding parser coverage as new real repo patterns appear.
 
 ## Open Questions
 
-- Which status fields are mandatory versus optional?
-- How should the app merge GitHub events with session logs in the UI?
-- When should a repo be flagged as stale or at risk?
+- Should delete be soft (archive) or hard (purge)? See `docs/v2_roadmap.md`.
+- What is the right status taxonomy? Healthy / Active / Stalled / Blocked / Unknown is the current candidate.
+- Should background sync run on a schedule, or is manual-only sufficient for v1 usage patterns?
