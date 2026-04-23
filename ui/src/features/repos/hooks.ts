@@ -6,6 +6,7 @@ import {
 
 import {
   createTrackedRepo,
+  deleteTrackedRepo,
   fetchMeta,
   fetchRepo,
   fetchRepos,
@@ -93,6 +94,20 @@ export function useUpdateTrackedRepo(repoId: string) {
         queryClient.invalidateQueries({ queryKey: queryKeys.trackedRepos }),
         queryClient.invalidateQueries({ queryKey: queryKeys.repos }),
         queryClient.invalidateQueries({ queryKey: queryKeys.repo(repoId) }),
+      ]);
+    },
+  });
+}
+
+export function useDeleteTrackedRepo() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (repoId: string) => deleteTrackedRepo(repoId),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.trackedRepos }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.repos }),
       ]);
     },
   });

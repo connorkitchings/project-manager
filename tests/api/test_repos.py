@@ -101,6 +101,11 @@ class FakeSyncService:
         self.tracked_repos[repo_id] = updated
         return updated
 
+    def delete_tracked_repo(self, repo_id: str):
+        if repo_id not in self.tracked_repos:
+            raise TrackedRepoNotFoundError(f"Tracked repo not found: {repo_id}")
+        del self.tracked_repos[repo_id]
+
     def sync_all(self):
         return SyncResponse(
             results=[SyncResult(repo_id="project-manager", synced=True)],
@@ -192,6 +197,22 @@ def test_tracked_repo_management_endpoints(tmp_path):
     assert updated.status_code == 200
     assert updated.get_json()["enabled"] is True
     assert updated.get_json()["notes"] == "Re-enabled"
+
+
+def test_delete_tracked_repo_endpoint(tmp_path):
+    app = create_app(
+        sync_service=FakeSyncService(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+
+    response = client.delete("/api/tracked-repos/project-manager")
+    assert response.status_code == 204
+    assert response.data == b""
+
+    response = client.delete("/api/tracked-repos/nonexistent")
+    assert response.status_code == 404
+    assert "not found" in response.get_json()["detail"].lower()
 
 
 def test_frontend_routes_serve_spa(tmp_path):

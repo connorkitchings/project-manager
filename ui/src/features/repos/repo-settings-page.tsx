@@ -2,6 +2,7 @@ import { type FormEvent, useEffect, useState } from "react";
 
 import {
   useCreateTrackedRepo,
+  useDeleteTrackedRepo,
   useTrackedRepos,
   useUpdateTrackedRepo,
 } from "@/features/repos/hooks";
@@ -22,8 +23,10 @@ interface TrackedRepoRowProps {
 
 function TrackedRepoRow({ repo }: TrackedRepoRowProps) {
   const updateMutation = useUpdateTrackedRepo(repo.id);
+  const deleteMutation = useDeleteTrackedRepo();
   const [name, setName] = useState(repo.name ?? "");
   const [notes, setNotes] = useState(repo.notes ?? "");
+  const [confirming, setConfirming] = useState(false);
 
   useEffect(() => {
     setName(repo.name ?? "");
@@ -52,18 +55,44 @@ function TrackedRepoRow({ repo }: TrackedRepoRowProps) {
             {repo.full_name} · {repo.id}
           </div>
         </div>
-        <button
-          className="rounded-full border border-ink/10 bg-white/75 px-4 py-2 text-sm font-medium text-ink transition hover:border-pine/25 hover:text-pine disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={updateMutation.isPending}
-          onClick={() =>
-            updateMutation.mutate({
-              enabled: !repo.enabled,
-            })
-          }
-          type="button"
-        >
-          {repo.enabled ? "Disable repo" : "Enable repo"}
-        </button>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <button
+            className="rounded-full border border-ink/10 bg-white/75 px-4 py-2 text-sm font-medium text-ink transition hover:border-pine/25 hover:text-pine disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={updateMutation.isPending}
+            onClick={() => updateMutation.mutate({ enabled: !repo.enabled })}
+            type="button"
+          >
+            {repo.enabled ? "Disable repo" : "Enable repo"}
+          </button>
+          {confirming ? (
+            <>
+              <button
+                className="rounded-full border border-danger/30 bg-danger/10 px-4 py-2 text-sm font-medium text-danger transition hover:bg-danger/20 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={deleteMutation.isPending}
+                onClick={() => deleteMutation.mutate(repo.id)}
+                type="button"
+              >
+                {deleteMutation.isPending ? "Removing…" : "Confirm remove"}
+              </button>
+              <button
+                className="rounded-full border border-ink/10 bg-white/75 px-4 py-2 text-sm font-medium text-ink transition hover:border-ink/25 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={deleteMutation.isPending}
+                onClick={() => setConfirming(false)}
+                type="button"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              className="rounded-full border border-ink/10 bg-white/75 px-4 py-2 text-sm font-medium text-ink/60 transition hover:border-danger/30 hover:text-danger disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => setConfirming(true)}
+              type="button"
+            >
+              Remove repo
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_1.25fr_auto]">
@@ -109,6 +138,9 @@ function TrackedRepoRow({ repo }: TrackedRepoRowProps) {
 
       {updateMutation.error ? (
         <p className="mt-3 text-sm text-danger">{updateMutation.error.message}</p>
+      ) : null}
+      {deleteMutation.error ? (
+        <p className="mt-3 text-sm text-danger">{deleteMutation.error.message}</p>
       ) : null}
     </article>
   );

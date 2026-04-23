@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { cleanup, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -85,6 +85,13 @@ describe("RepoSettingsPage", () => {
           return new Response(JSON.stringify(trackedRepos[index]));
         }
 
+        if (url.includes("/api/tracked-repos/") && init?.method === "DELETE") {
+          const repoId = url.split("/").pop() ?? "";
+          const index = trackedRepos.findIndex((repo) => repo.id === repoId);
+          if (index !== -1) trackedRepos.splice(index, 1);
+          return new Response(null, { status: 204 });
+        }
+
         return Promise.reject(new Error(`Unhandled fetch for ${url}`));
       }) as typeof fetch,
     );
@@ -92,6 +99,7 @@ describe("RepoSettingsPage", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    cleanup();
   });
 
   it("renders tracked repos and toggles enabled state", async () => {
@@ -112,6 +120,57 @@ describe("RepoSettingsPage", () => {
     });
   });
 
+  it("removes a tracked repo after confirmation", async () => {
+    const user = userEvent.setup();
+
+    renderWithAppProviders(<RepoSettingsPage />, {
+      route: "/settings/repos",
+      path: "/settings/repos",
+    });
+
+    expect(await screen.findByText("Project Manager")).toBeInTheDocument();
+
+    const removeButtons = screen.getAllByRole("button", { name: "Remove repo" });
+    await user.click(removeButtons[0]);
+
+    expect(
+      await screen.findByRole("button", { name: "Confirm remove" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Confirm remove" }));
+
+    await waitFor(
+      () => {
+        expect(screen.queryAllByRole("article")).toHaveLength(1);
+      },
+      { timeout: 3000 },
+    );
+  });
+
+  it("cancels removal when Cancel is clicked", async () => {
+    const user = userEvent.setup();
+
+    renderWithAppProviders(<RepoSettingsPage />, {
+      route: "/settings/repos",
+      path: "/settings/repos",
+    });
+
+    expect(await screen.findAllByRole("article")).toHaveLength(2);
+
+    await user.click(screen.getAllByRole("button", { name: "Remove repo" })[0]);
+    expect(
+      screen.getByRole("button", { name: "Confirm remove" }),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(
+      screen.queryByRole("button", { name: "Confirm remove" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByRole("article")).toHaveLength(2);
+  });
+
   it("adds a new tracked repo", async () => {
     const user = userEvent.setup();
 
@@ -120,7 +179,7 @@ describe("RepoSettingsPage", () => {
       path: "/settings/repos",
     });
 
-    await screen.findByText("Project Manager");
+    expect(await screen.findAllByRole("article")).toHaveLength(2);
     const formSection = screen
       .getAllByRole("heading", { name: "Tracked repository management" })[0]
       .closest("section");

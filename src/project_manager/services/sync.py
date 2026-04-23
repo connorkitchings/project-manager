@@ -137,6 +137,10 @@ class RepoSyncService:
             updates["notes"] = notes.strip() or None if isinstance(notes, str) else None
         return self.snapshot_store.update_tracked_repo(repo_id, **updates)
 
+    def delete_tracked_repo(self, repo_id: str) -> None:
+        """Remove a tracked repo and its snapshot from persisted state."""
+        self.snapshot_store.delete_tracked_repo(repo_id)
+
     def sync_all(self) -> SyncResponse:
         """Sync all enabled tracked repos and return per-repo outcomes."""
         started_at = datetime.now(timezone.utc)

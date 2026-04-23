@@ -43,9 +43,10 @@ class SQLiteAppStateStore:
         self._ensure_schema()
 
     def _connect(self) -> sqlite3.Connection:
-        """Create a new SQLite connection."""
+        """Create a new SQLite connection with FK enforcement enabled."""
         connection = sqlite3.connect(self.database_path)
         connection.row_factory = sqlite3.Row
+        connection.execute("PRAGMA foreign_keys = ON")
         return connection
 
     @contextmanager
@@ -270,6 +271,16 @@ class SQLiteAppStateStore:
             if cursor.rowcount == 0:
                 raise TrackedRepoNotFoundError(f"Tracked repo not found: {repo_id}")
         return self.get_tracked_repo(repo_id, include_disabled=True)
+
+    def delete_tracked_repo(self, repo_id: str) -> None:
+        """Delete a tracked repo and its cascaded snapshot from SQLite."""
+        with self._lock, self._connection() as connection:
+            cursor = connection.execute(
+                "DELETE FROM tracked_repos WHERE id = ?",
+                (repo_id,),
+            )
+            if cursor.rowcount == 0:
+                raise TrackedRepoNotFoundError(f"Tracked repo not found: {repo_id}")
 
     def get_snapshot(self, repo_id: str) -> RepoDetail | None:
         """Return the latest snapshot for a repo if present."""

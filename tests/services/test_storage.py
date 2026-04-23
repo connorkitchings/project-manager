@@ -1,9 +1,10 @@
 """Tests for SQLite-backed app state storage."""
 
+import pytest
 from datetime import datetime, timezone
 
 from project_manager.models import GitHubEvent, RepoDetail, TrackedRepo
-from project_manager.services.storage import SQLiteAppStateStore
+from project_manager.services.storage import SQLiteAppStateStore, TrackedRepoNotFoundError
 
 
 def test_bootstrap_persists_tracked_repos(tmp_path):
@@ -107,6 +108,44 @@ def test_create_and_update_tracked_repo(tmp_path):
     assert updated.notes == "Back in rotation"
     assert [repo.id for repo in store.list_tracked_repos()] == ["panicstats"]
     assert [repo.id for repo in store.list_enabled_repos()] == ["panicstats"]
+
+
+def test_delete_tracked_repo(tmp_path):
+    database_path = tmp_path / "project_manager.db"
+    store = SQLiteAppStateStore(database_path)
+    store.create_tracked_repo(
+        TrackedRepo(
+            id="panicstats",
+            owner="connorkitchings",
+            repo="panicstats",
+            name="PanicStats",
+        )
+    )
+
+    store.delete_tracked_repo("panicstats")
+
+    assert store.list_tracked_repos() == []
+    with pytest.raises(TrackedRepoNotFoundError):
+        store.delete_tracked_repo("panicstats")
+
+
+def test_delete_tracked_repo_cascades_snapshot(tmp_path):
+    database_path = tmp_path / "project_manager.db"
+    store = SQLiteAppStateStore(database_path)
+    store.create_tracked_repo(
+        TrackedRepo(id="panicstats", owner="connorkitchings", repo="panicstats")
+    )
+    store.upsert_snapshot(
+        RepoDetail(
+            id="panicstats",
+            name="PanicStats",
+            full_name="connorkitchings/panicstats",
+        )
+    )
+
+    store.delete_tracked_repo("panicstats")
+
+    assert store.get_snapshot("panicstats") is None
 
 
 def test_bootstrap_preserves_runtime_managed_fields(tmp_path):

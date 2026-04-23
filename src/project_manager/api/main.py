@@ -121,6 +121,14 @@ def create_app(sync_service=None, frontend_dir: Path | None = None) -> Flask:
             return jsonify({"detail": str(exc)}), 404
         return jsonify(tracked_repo.to_dict())
 
+    @app.delete("/api/tracked-repos/<repo_id>")
+    def delete_tracked_repo(repo_id: str):
+        try:
+            service.delete_tracked_repo(repo_id)
+        except TrackedRepoNotFoundError:
+            return jsonify({"detail": f"Tracked repo not found: {repo_id}"}), 404
+        return "", 204
+
     @app.get("/api/repos/<repo_id>")
     def get_repo(repo_id: str):
         try:
