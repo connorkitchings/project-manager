@@ -1,54 +1,88 @@
-"""Test fixtures and utilities for the project.
+"""Common pytest fixtures for Project Manager tests."""
 
-This module provides pytest fixtures and utilities for testing.
-"""
-
-import tempfile
-from pathlib import Path
+from datetime import datetime, timezone
 
 import pytest
 
-
-@pytest.fixture
-def temp_dir():
-    """Provide a temporary directory for tests."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        yield Path(tmpdir)
-
-
-@pytest.fixture
-def sample_env_file(temp_dir):
-    """Create a sample .env file for testing."""
-    env_path = temp_dir / ".env"
-    env_path.write_text("""
-# Test configuration
-DATABASE_URL=postgresql://localhost/test
-API_KEY=test-api-key-12345
-DEBUG=true
-PORT=8080
-""")
-    return env_path
+from project_manager.models import (
+    GitHubActivity,
+    GitHubEvent,
+    RepoDocumentBundle,
+    TrackedRepo,
+)
 
 
 @pytest.fixture
-def empty_env_file(temp_dir):
-    """Create an empty .env file for testing."""
-    env_path = temp_dir / ".env"
-    env_path.write_text("")
-    return env_path
+def tracked_repo() -> TrackedRepo:
+    """Return a representative tracked repo registry entry."""
+    return TrackedRepo(
+        id="project-manager",
+        name="Project Manager",
+        owner="connorkitchings",
+        repo="project-manager",
+        enabled=True,
+        notes="Primary tracked repo",
+    )
 
 
 @pytest.fixture
-def clean_config():
-    """Provide a fresh Config instance for testing.
+def sample_docs() -> RepoDocumentBundle:
+    """Return a representative set of repo docs."""
+    return RepoDocumentBundle(
+        readme="# Project Manager\n\nInternal dashboard for repo status.\n",
+        project_charter=(
+            "**Vision:** Give one place to understand tracked repository health.\n\n"
+            "**Technical Goal:** Deliver a backend MVP for repo sync.\n"
+        ),
+        implementation_schedule=(
+            "**Current Stage:** Backend MVP\n\n"
+            "## Immediate Next Steps\n"
+            "1. Build sync service\n"
+            "2. Add list/detail APIs\n"
+        ),
+        latest_session_log=(
+            "- **Goal**: Replace template code with backend MVP\n"
+            "- **Accomplished**: Reframed the repo around Project Manager\n"
+            "- **Blockers**: None\n"
+        ),
+        documentation_sources=[
+            "README.md",
+            "docs/project_charter.md",
+            "docs/implementation_schedule.md",
+            "session_logs/latest",
+        ],
+        missing_sources=[],
+    )
 
-    This fixture clears any cached configuration to ensure
-    tests don't interfere with each other.
-    """
-    # Clear any cached config
-    import vibe_coding.config
 
-    vibe_coding.config._config_instance = None
-    yield
-    # Clean up after test
-    vibe_coding.config._config_instance = None
+@pytest.fixture
+def sample_activity() -> GitHubActivity:
+    """Return representative recent GitHub activity."""
+    now = datetime.now(timezone.utc)
+    return GitHubActivity(
+        commits=[
+            GitHubEvent(
+                type="commit",
+                title="Implement backend MVP",
+                url="https://example.com/commit/1",
+                occurred_at=now,
+            )
+        ],
+        pull_requests=[
+            GitHubEvent(
+                type="pull_request",
+                title="Add repo sync API",
+                url="https://example.com/pull/1",
+                occurred_at=now,
+            )
+        ],
+        issues=[
+            GitHubEvent(
+                type="issue",
+                title="Track stale repos",
+                url="https://example.com/issues/1",
+                occurred_at=now,
+            )
+        ],
+        last_activity_at=now,
+    )

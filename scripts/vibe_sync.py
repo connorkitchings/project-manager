@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Vibe-Sync Controller CLI
-"""
+"""Session handoff helper CLI for Project Manager."""
 
 import datetime
 import re
@@ -13,7 +11,7 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 
-app = typer.Typer(help="Vibe-Coding Session Manager")
+app = typer.Typer(help="Project Manager session manager")
 console = Console()
 
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -141,7 +139,7 @@ class ContextManager:
 
         # Assemble Directive
         directive = f"""
-VIBE-SYNC HANDOFF
+PROJECT MANAGER HANDOFF
 ---
 MODE: {start_mode}
 SNAPSHOT: {snapshot.splitlines()[0] if snapshot else "N/A"}
@@ -231,7 +229,7 @@ def start(
     Initialize a new development session.
     Generates a pruned context for the AI agent.
     """
-    console.print(Panel.fit("Vibe-Sync: Initializing Session", style="bold blue"))
+    console.print(Panel.fit("Project Manager: Initializing Session", style="bold blue"))
 
     # 1. Read Context
     if not CONTEXT_FILE.exists():

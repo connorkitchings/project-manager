@@ -14,7 +14,7 @@ This playbook maintains the evolving knowledge, strategic constraints, and execu
 9. **Human Validates Before Implementation**: Explicit human checkpoint before proceeding to code generation.
 
 ## [STRATEGIES]
-1. **Template Adaptation & Initialization**: When setting up a new project from this template, first execute setup scripts, adapt the Context Router (`.agent/CONTEXT.md`), and selectively prune boilerplate code (e.g., in `notebooks/` and `models/`).
+1. **Repository Transition & Cleanup**: Keep migrating the inherited template scaffold toward the real Project Manager product. When legacy code or docs disagree with the charter, treat them as cleanup work rather than product truth.
 2. **Multi-Tool Synergy**: Write deterministic, self-contained scripts and follow strict formatting (`ruff`) to ensure the codebase remains navigable and modifiable by any supported AI CLI (Gemini, Claude Code, Codex).
 3. **Continuous Context Maintenance**: Regularly run health checks and session handoff routines to ensure that the context files accurately reflect the current state of the architecture.
 
@@ -45,10 +45,8 @@ This playbook maintains the evolving knowledge, strategic constraints, and execu
 ### How to Invoke a Review Agent
 
 1. **Select the appropriate agent** from the roster above
-2. **Copy the prompt** from `.agent/VIBE_CRITIQUE_PROMPTS.md`
-3. **Fill in the context** with your specific situation
-4. **Submit to AI** for review
-5. **Save output** to `.agent/reviews/YYYY-MM-DD/N - [Agent] Review.md`
+2. **Prompt the AI** with the agent's role, your specific context, and what you need reviewed
+3. **Save output** to `.agent/reviews/YYYY-MM-DD/N - [Agent] Review.md`
 
 ### When to Run Reviews
 

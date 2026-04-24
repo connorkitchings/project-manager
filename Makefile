@@ -1,4 +1,4 @@
-.PHONY: help install setup test lint format format-check docs docs-serve validate clean all dev
+.PHONY: help install frontend-install frontend-test frontend-build test lint format format-check docs docs-serve validate clean all dev
 
 help:	## Show this help message
 	@echo 'Usage: make [target]'
@@ -9,11 +9,17 @@ help:	## Show this help message
 install:	## Install dependencies
 	uv sync
 
-setup:	## Interactive project setup
-	uv run python scripts/setup_project.py
+frontend-install:	## Install frontend dependencies
+	npm --prefix ui install --cache /Users/connorkitchings/.cache/npm
+
+frontend-test:	## Run frontend tests
+	npm --prefix ui test
+
+frontend-build:	## Build frontend assets
+	npm --prefix ui run build
 
 test:	## Run tests with coverage
-	uv run pytest tests/test_config.py tests/integration/ --cov=vibe_coding --cov-report=html --cov-report=term-missing
+	uv run pytest --cov=project_manager --cov-report=html --cov-report=term-missing
 
 lint:	## Run linter
 	uv run ruff check .
@@ -30,8 +36,12 @@ docs:	## Build documentation
 docs-serve:	## Serve documentation locally
 	uv run mkdocs serve
 
-validate:	## Validate template
-	uv run python scripts/validate_template.py
+validate:	## Validate code and docs
+	npm --prefix ui test
+	npm --prefix ui run build
+	uv run ruff check .
+	uv run pytest -q
+	uv run --extra dev mkdocs build
 
 clean:	## Clean build artifacts
 	find . -type d -name __pycache__ -exec rm -rf {} +
@@ -45,5 +55,6 @@ all:	## Run all quality checks (format, lint, test)
 
 dev:	## Start development environment
 	@echo "Starting development environment..."
-	@echo "Run 'make test' to verify setup"
-	@echo "Run 'make docs-serve' to preview documentation"
+	@echo "Run 'uv run flask --app project_manager.api.main run' for the backend"
+	@echo "Run 'npm --prefix ui run dev' for frontend development"
+	@echo "Run 'make validate' to verify the full stack"

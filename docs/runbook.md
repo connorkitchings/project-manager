@@ -1,70 +1,86 @@
 # Runbook
 
-This runbook documents how to operate and troubleshoot the **Vibe Coding Data Science Template** in its default state. When the template becomes a named project, extend each section with environment-specific details per the [Template Kickoff Guide](./template_starting_guide.md).
+This runbook covers the current operating expectations for Project Manager while the product is still in its early internal phase.
 
-## Table of Contents
+## Monitoring Priorities
 
-- [Monitoring](#monitoring)
-- [Common Issues & Troubleshooting](#common-issues--troubleshooting)
-- [Deployment & Rollback](#deployment--rollback)
-- [Contact & Escalation](#contact--escalation)
+- **Documentation integrity:** The product depends on tracked repos exposing predictable docs. Broken or missing docs should be treated as product data issues.
+- **GitHub access:** The sync flow depends on valid GitHub credentials and enough API quota.
+- **Sync quality:** If parsed summaries look wrong, compare raw repo docs and GitHub activity before changing parser behavior.
+- **Docs site health:** `mkdocs build` is the quickest check that the repository documentation is still coherent.
 
-## Monitoring
+## Common Issues
 
-- **CI Pipeline:** GitHub Actions workflow `.github/workflows/ci.yml` runs linting, security scans, and tests on every push/PR. Treat red builds as the primary health signal while the template is being tailored.
-- **Prefect Flows (local):** When running `prefect server start`, use Prefect Orion UI (default `http://127.0.0.1:4200`) to inspect flow runs from `src/vibe_coding/flows/`.
-- **Structured Logs:** Application scripts use `vibe_coding.utils.logging` which logs to stdout with timestamps and module names. Redirect output to files during longer runs for later analysis.
+### Issue: `uv sync` fails or dependencies are missing
 
-## Common Issues & Troubleshooting
+**Symptoms**
 
-### Issue: `uv sync` fails or dependencies missing
+- Environment creation fails
+- Local commands cannot import project modules
 
-**Symptoms:**
-- `uv sync` exits with resolution errors or missing interpreter messages.
+**Resolution**
 
-**Troubleshooting Steps:**
-1. Verify Python 3.10+ is installed: `python3 --version`.
-2. Clear the `.venv` (if created) and rerun `uv sync`.
-3. On macOS/Linux, ensure `uv` binary is on the PATH (`which uv`).
+1. Confirm Python 3.10+ is installed.
+2. Re-run `uv sync`.
+3. If the environment is stale, recreate `.venv` and sync again.
 
-**Resolution:**
-Re-run `uv sync` after environment correction. Consult `pyproject.toml` to confirm dependency pins remain intact.
+### Issue: GitHub credentials are missing or invalid
 
-### Issue: Prefect example flow fails to start
+**Symptoms**
 
-**Symptoms:**
-- CLI prints connection errors (e.g., `Failed to connect to Orion API`).
+- Sync requests fail with authentication errors
+- API requests return 401 or 403 responses
 
-**Troubleshooting Steps:**
-1. Ensure `prefect server start` is running in a separate terminal.
-2. Export `PREFECT_API_URL=http://127.0.0.1:4200/api`.
-3. Rerun `python src/vibe_coding/flows/example_flow.py`.
+**Resolution**
 
-**Resolution:**
-Restart the Prefect server and flow once configuration variables are set. Document any persistent errors in `docs/knowledge_base.md`.
+1. Check the configured GitHub token in the local environment.
+2. Verify the token has access to the tracked repos.
+3. Retry after confirming the token is loaded by the app or CLI.
+4. If the error mentions rate limiting, treat a token as required for the current tracked-repo set.
 
-### Issue: CI pipeline red due to lint/test failure
+### Issue: Repo summary is incomplete
 
-**Symptoms:**
-- GitHub Actions job fails on `ruff` or `pytest`.
+**Symptoms**
 
-**Troubleshooting Steps:**
-1. Reproduce locally with `uv run ruff format . && uv run ruff check .` and `uv run pytest -vv`.
-2. Apply fixes or update tests to meet expectations.
-3. Push changes; confirm pipeline passes.
+- Current goal or recent updates are blank
+- A repo appears stale even though it is active
 
-**Resolution:**
-Keep local checks green before pushing to avoid repeated CI failures.
+**Resolution**
 
-## Deployment & Rollback
+1. Check whether the tracked repo contains the expected files:
+   `README.md`, `docs/project_charter.md`, `docs/implementation_schedule.md`, recent `session_logs/`.
+2. Confirm the repo actually follows the expected structure.
+3. If the docs exist but parse poorly, capture an example and update parser rules rather than hard-coding a repo-specific fix.
 
-The template does not ship production deployments. When converting to a real project:
+## Current Validation Set
 
-- Document deployment targets (staging/prod) and release commands here.
-- Record rollback steps (e.g., revert tags, redeploy previous container).
-- Link to automation scripts or external runbooks once created.
+- `connorkitchings/FRED` - full charter, schedule, and session-log coverage
+- `connorkitchings/panicstats` - strong README + session log, but no charter/schedule pair
+- `connorkitchings/JamBandNerd` - broad README surface with partial template-era metadata
+- `connorkitchings/Vibe-Coding` - template-shaped repo for the full-doc happy path
 
-## Contact & Escalation
+### Issue: Documentation build fails
 
-- **Primary Maintainer:** Connor Kitchings (`connorkitchings` on GitHub).
-- **Escalation Path:** If adoption teams encounter issues beyond the template scope, open an issue in the repository and notify the DevEx Guild for triage.
+**Symptoms**
+
+- `mkdocs build` fails
+- Navigation or links are broken
+
+**Resolution**
+
+1. Run `uv run mkdocs build` locally.
+2. Fix broken links or invalid nav entries in `mkdocs.yml`.
+3. If a page is intentionally legacy, mark it clearly and remove it from front-door navigation if needed.
+
+## Rollback Guidance
+
+The project has no deployment runbook yet. For now:
+
+- Keep changes small and branch-based.
+- Revert documentation or parser changes with a standard git revert if a change makes the docs misleading.
+- Capture any rollback-worthy incident in `session_logs/` and `docs/knowledge_base.md`.
+
+## Escalation
+
+- **Primary maintainer:** Connor Kitchings
+- **Escalate when:** parser behavior is unclear, a required status field cannot be inferred safely, or a GitHub permission issue blocks development

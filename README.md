@@ -1,317 +1,119 @@
-# Vibe Coding Template
+# Project Manager
 
-> **A lean, practical template for AI-assisted development supporting multiple AI coding tools.**
+> Internal web dashboard for reviewing the status of selected GitHub repositories.
 
-**Version 2.0** — Multi-Tool Template (Claude Code, Gemini CLI, Codex CLI, Antigravity)
+## Overview
 
----
+Project Manager is a documentation-aware portfolio dashboard for repositories built with this team's working template. It combines structured project docs with recent GitHub activity so one person can quickly answer:
 
-## 🎯 What This Template Provides
+- What is each project trying to do right now?
+- What changed recently?
+- Which repos are active, stalled, or unclear?
+- Which repos should be included in the dashboard at all?
 
-This is a **Vibe Coding template** designed for "medium sophistication" AI-assisted development. It provides:
+The product is intentionally narrow in v1:
 
-- ✅ **Multi-tool AI guidance** — Works with Claude Code, Gemini CLI, Codex CLI, and Antigravity
-- ✅ **Session management** — Structured workflows for starting, working, and closing sessions
-- ✅ **Cross-tool handoff** — Optional cli-continues integration for seamless context transfer
-- ✅ **Quality gates** — Pre-commit checks, linting, testing, and health checks
-- ✅ **Development standards** — Coding guidelines, checklists, and best practices
-- ✅ **Documentation structure** — MkDocs-ready documentation with templates
-- ✅ **Markdown fetcher** — Convert web URLs to clean Markdown (80% token reduction)
-- ✅ **Working defaults** — Everything works out of the box
+- Single-user internal workflow
+- Curated include/exclude list of repositories
+- Web-first experience
+- Repository docs as the primary source of intent
+- GitHub activity as supporting evidence and freshness signals
 
-**Philosophy**: Practical patterns proven in real-world projects (cfb_model, PanicStats, JamBandNerd).
+## Current Status
 
----
+This repository started from a generic AI/data-project template, but the active product now includes a Flask backend plus a built-in React frontend. The current MVP includes a dashboard, repo detail view, tracked-repo settings UI, YAML bootstrap registry, SQLite-backed app state, and on-demand sync for tracked repositories.
 
-## 🚀 Getting Started
+The default tracked-repo seed now validates the product against a small live set of public repos: `FRED`, `panicstats`, `JamBandNerd`, and `Vibe-Coding`.
+
+## Planned v1 Capabilities
+
+- Portfolio dashboard showing tracked repos and high-level health
+- Easy repo inclusion and exclusion controls
+- A normalized status snapshot per repo:
+  current goal, recent updates, last activity, next milestone, and blockers when available
+- Repo detail view combining parsed docs and recent GitHub signals
+- Tracked repo management in the UI for adding repos and enabling/disabling them
+- Lightweight sync flow that refreshes repo summaries on demand
+- SQLite-backed persisted snapshots so sync results survive restarts
+
+## Status Inputs
+
+The first implementation should read directly from agreed repository documents plus GitHub metadata:
+
+- `README.md`
+- `docs/project_charter.md`
+- `docs/implementation_schedule.md`
+- recent `session_logs/`
+- recent GitHub issues, pull requests, and commits
+
+Over time, the project may add a canonical generated status artifact, but v1 should not require one.
+
+## Quick Start
 
 ### Prerequisites
 
-- **Python 3.10+** ([Download](https://www.python.org/downloads/))
-- **uv** ([Install](https://github.com/astral-sh/uv))
-- **Git** for version control
+- Python 3.10+
+- `uv`
+- Git
+- Node.js 20+
+- GitHub token recommended for multi-repo sync
 
-### Quick Start
-
-1. **Use this template:**
-   ```bash
-   # Clone or use as GitHub template
-   git clone https://github.com/your-username/Vibe-Coding.git
-   cd Vibe-Coding
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   uv sync
-   ```
-
-3. **Read the agent guidance:**
-   ```bash
-   # Start here for AI-assisted development
-   cat AGENTS.md
-
-   # Or for your specific tool:
-   cat CLAUDE.md    # Claude Code
-   cat GEMINI.md    # Gemini CLI
-   ```
-
-4. **Start a session:**
-   - Check branch: `git branch` (never work on `main`)
-   - Create feature branch: `git checkout -b feat/your-feature`
-   - Read: `.agent/CONTEXT.md`
-   - Follow: `.agent/skills/start-session/SKILL.md`
-
-### For AI Coding Tools
-
-**All tools read the same files:**
-- `AGENTS.md` — Multi-tool AI guidance (start here)
-- `.agent/CONTEXT.md` — Current project state
-- `.agent/skills/` — Task workflows (start-session, end-session)
-- `.codex/QUICKSTART.md` — Essential commands
-
-**Tool-specific entry points:**
-- **Claude Code**: Reads `CLAUDE.md` → redirects to `AGENTS.md`
-- **Gemini CLI**: Reads `GEMINI.md` → redirects to `AGENTS.md`
-- **Codex/Antigravity**: Reads `AGENTS.md` directly
-
----
-
-## 📂 Project Structure
-
-```
-Vibe-Coding/
-├── AGENTS.md                   # Multi-tool AI guidance (READ FIRST)
-├── CLAUDE.md                   # Redirect for Claude Code
-├── GEMINI.md                   # Redirect for Gemini CLI
-├── README.md                   # This file
-│
-├── .agent/                     # Active session management
-│   ├── CONTEXT.md              # Entry point (project snapshot)
-│   ├── skills/                 # Reusable task workflows
-│   │   ├── CATALOG.md          # Skills index
-│   │   ├── start-session/      # Session initialization
-│   │   └── end-session/        # Session closing
-│   └── workflows/              # Automation scripts
-│       └── health-check.md     # Pre-commit validation
-│
-├── .codex/                     # Read-only context cache
-│   ├── README.md               # Purpose explanation
-│   ├── MAP.md                  # Project tree
-│   └── QUICKSTART.md           # Essential commands
-│
-├── src/                        # Source code
-│   └── vibe_coding/
-│       └── utils/
-│
-├── tests/                      # Test suite
-│   ├── api/
-│   ├── core/
-│   ├── data/
-│   └── models/
-│
-├── docs/                       # Documentation (MkDocs)
-│   ├── index.md
-│   ├── project_charter.md
-│   ├── implementation_schedule.md
-│   ├── development_standards.md
-│   ├── checklists.md
-│   └── architecture/
-│
-├── session_logs/               # Session history
-│   ├── README.md
-│   ├── TEMPLATE.md
-│   └── YYYY-MM-DD/
-│
-├── scripts/                    # Utility scripts
-├── config/                     # Configuration files
-├── pyproject.toml              # Dependencies and tooling
-└── mkdocs.yml                  # Documentation config
-```
-
----
-
-## 🔧 Essential Commands
-
-### Development Loop
+### Local Setup
 
 ```bash
-# Format and lint
-uv run ruff format . && uv run ruff check .
-
-# Run tests
-uv run pytest
-
-# Run tests quietly
+uv sync
+npm --prefix ui install
+git checkout -b feat/<topic>
+npm --prefix ui run build
 uv run pytest -q
-
-# Health check (before commits)
-# Follow steps in .agent/workflows/health-check.md
+uv run --extra dev mkdocs serve
 ```
 
-### Documentation
+### Run The App
 
 ```bash
-# Serve docs locally
-mkdocs serve  # http://127.0.0.1:8000
+# Flask API
+uv run flask --app project_manager.api.main run
 
-# Build docs
-mkdocs build
+# React dev server
+npm --prefix ui run dev
 ```
 
-### Git Workflow
+### GitHub Sync Notes
 
-```bash
-# CRITICAL: Never work on main
-git branch
+- Configure `PROJECT_MANAGER_GITHUB_TOKEN` when using the seeded multi-repo validation set.
+- Unauthenticated GitHub API access can hit rate limits quickly once the app syncs several repositories.
+- New repos can be added from `/settings/repos`; the app validates that the GitHub repository exists before saving it into SQLite.
 
-# Create feature branch
-git checkout -b feat/<feature-name>
+### Read First
 
-# Commit with conventional format
-git commit -m "feat: add new feature"
-git commit -m "fix: resolve bug"
-git commit -m "docs: update documentation"
-```
+- `.agent/CONTEXT.md`
+- `docs/project_charter.md`
+- `docs/implementation_schedule.md`
+- `.agent/skills/start-session/SKILL.md`
 
----
+## Documentation
 
-## 🤖 Multi-Tool AI Support
+- `docs/index.md` - Documentation hub
+- `docs/project_brief.md` - Short product summary
+- `docs/project_charter.md` - Product scope, architecture, and assumptions
+- `docs/implementation_schedule.md` - Current roadmap
+- `docs/runbook.md` - Operating notes and troubleshooting
+- `docs/api/README.md` - Draft API direction
 
-This template works with all major AI coding tools:
+## Working Conventions
 
-### Claude Code (claude.ai/code)
-- Entry: `CLAUDE.md` → `AGENTS.md`
-- Skills: `.agent/skills/`
-- Context: `.agent/CONTEXT.md`
+- Do not work directly on `main`
+- Keep session logs in `session_logs/`
+- Update docs when product direction changes
+- Treat repository documentation as product data, not just prose
 
-### Gemini CLI
-- Entry: `GEMINI.md` → `AGENTS.md`
-- Quick ref: `.codex/QUICKSTART.md`
+## Near-Term Priorities
 
-### Codex CLI / Antigravity (VS Code fork)
-- Entry: `AGENTS.md`
-- Map: `.codex/MAP.md`
+1. Continue tightening the normalized repo status contract as new repo patterns appear.
+2. Capture the first v2 roadmap decisions around alerts, discovery, and summary artifacts.
+3. Decide whether tracked-repo management needs delete/archive behavior or broader GitHub discovery.
 
-### Session Handoff (cli-continues)
-- Docs: `docs/tools/cli-continues.md`
-- Workflow: `.agent/workflows/session-handoff.md`
-- Optional Node.js 22+ tool for cross-tool session transfer
+## Legacy Notes
 
-**All tools share:**
-- Same session logging format
-- Same quality gates
-- Same essential commands
-- Same guardrails
-- Optional cli-continues for context handoff
-
----
-
-## 📖 Key Documentation
-
-### For Getting Started
-- `AGENTS.md` — Multi-tool AI guidance (read first)
-- `.agent/CONTEXT.md` — Current project state
-- `.codex/QUICKSTART.md` — Essential commands
-- `docs/template_starting_guide.md` — Adapt template for your project
-
-### For Development
-- `.agent/skills/CATALOG.md` — Available workflows
-- `docs/development_standards.md` — Coding standards
-- `docs/checklists.md` — Quality gates
-- `docs/implementation_schedule.md` — Current priorities
-
-### For Reference
-- `.codex/MAP.md` — Full project tree
-- `docs/architecture/` — Architecture decisions
-- `session_logs/` — Development history
-- `docs/knowledge_base.md` — Solutions and patterns
-
----
-
-## ✅ Quality Gates
-
-### Pre-Commit Checklist
-- [ ] Code formatted: `uv run ruff format .`
-- [ ] Linting passes: `uv run ruff check .`
-- [ ] Tests pass: `uv run pytest`
-- [ ] No secrets in code
-- [ ] Branch is not `main`
-
-### Pre-Merge Checklist
-- [ ] All pre-commit checks pass
-- [ ] Session log created
-- [ ] Documentation updated
-- [ ] Implementation schedule updated
-- [ ] Tests cover new code
-
----
-
-## 🎓 Adapting This Template
-
-When starting a new project:
-
-1. **Read the Template Starting Guide**: `docs/template_starting_guide.md`
-2. **Update project metadata**: Edit `pyproject.toml` and `README.md`
-3. **Customize AGENTS.md**: Add project-specific critical rules
-4. **Update .agent/CONTEXT.md**: Replace template notes with your project details
-5. **Configure docs**: Update `mkdocs.yml` navigation
-6. **Create initial tasks**: Populate `docs/implementation_schedule.md`
-
-See `docs/template_starting_guide.md` for detailed instructions.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-1. Create a feature branch: `git checkout -b feat/<name>`
-2. Follow development standards: See `docs/development_standards.md`
-3. Run health checks: Follow `.agent/workflows/health-check.md`
-4. Create session log: See `session_logs/TEMPLATE.md`
-5. Open pull request with clear description
-
----
-
-## 📋 Session Workflow
-
-Every development session should:
-
-**Start:**
-1. Check branch: `git branch` (create feature branch if on `main`)
-2. Read: `.agent/CONTEXT.md`
-3. Load: `.agent/skills/start-session/SKILL.md`
-4. Plan before implementing
-
-**During:**
-- Follow: `.agent/skills/CATALOG.md` for common tasks
-- Track: `docs/implementation_schedule.md` for priorities
-- Document: Decisions and issues as you go
-
-**End:**
-1. Run: `.agent/workflows/health-check.md`
-2. Create: Session log in `session_logs/YYYY-MM-DD/NN.md`
-3. Update: `docs/implementation_schedule.md` if tasks completed
-4. Load: `.agent/skills/end-session/SKILL.md`
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-## 🌟 Credits
-
-Template patterns derived from successful projects:
-- **cfb_model** — Comprehensive session management and context loading
-- **PanicStats** — Skill-based workflows and entry points
-- **JamBandNerd** — Boot order, context budget, triage matrix
-
-**Vibe Coding System** — Philosophy and methodology by Connor Kitchings
-
----
-
-**Version**: 2.0 (Multi-Tool Template)
-**Last Updated**: 2026-02-11
-**Status**: Ready for use
+Some low-level docs and code paths still reflect the original template. Where that remains true, the updated docs call it out explicitly instead of pretending the migration is complete.

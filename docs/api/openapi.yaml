@@ -1,19 +1,315 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
-  title: [Your API Name]
-  version: 1.0.0
+  title: Project Manager API
+  version: 0.1.0
+  description: Draft API for the internal GitHub repository status dashboard.
 paths:
-  /example:
+  /:
     get:
-      summary: Get an example resource
+      summary: Frontend application shell
       responses:
-        '200':
-          description: Successful response
+        "200":
+          description: HTML application shell
+  /api/meta:
+    get:
+      summary: Application health and backend info
+      responses:
+        "200":
+          description: Service metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootResponse"
+  /api/tracked-repos:
+    get:
+      summary: List all tracked repositories, including disabled ones
+      responses:
+        "200":
+          description: Runtime tracked repos
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                    example: Hello, World!
+                  tracked_repos:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TrackedRepo"
+    post:
+      summary: Create a tracked repository
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTrackedRepoInput"
+      responses:
+        "201":
+          description: Tracked repo created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackedRepo"
+        "400":
+          description: Validation error
+        "409":
+          description: Duplicate tracked repo id
+  /api/tracked-repos/{repo_id}:
+    delete:
+      summary: Delete a tracked repository and its snapshot
+      parameters:
+        - name: repo_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Tracked repo deleted
+        "404":
+          description: Tracked repo not found
+    patch:
+      summary: Update tracked repo runtime fields
+      parameters:
+        - name: repo_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTrackedRepoInput"
+      responses:
+        "200":
+          description: Updated tracked repo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackedRepo"
+        "404":
+          description: Tracked repo not found
+  /api/repos:
+    get:
+      summary: List tracked repositories
+      responses:
+        "200":
+          description: Repository summaries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  repos:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RepoSummary"
+  /api/repos/{repo_id}:
+    get:
+      summary: Get one tracked repository
+      parameters:
+        - name: repo_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Repository detail snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RepoDetail"
+        "404":
+          description: Tracked repository not found
+  /api/sync:
+    post:
+      summary: Trigger a refresh for tracked repositories
+      responses:
+        "200":
+          description: Sync completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncResponse"
+components:
+  schemas:
+    RootResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+        persistence:
+          type: string
+        database_file:
+          type: string
+        tracked_repos_file:
+          type: string
+        latest_sync_run:
+          allOf:
+            - $ref: "#/components/schemas/SyncRun"
+          nullable: true
+    TrackedRepo:
+      type: object
+      properties:
+        id:
+          type: string
+        owner:
+          type: string
+        repo:
+          type: string
+        full_name:
+          type: string
+        name:
+          type: string
+          nullable: true
+        display_name:
+          type: string
+        enabled:
+          type: boolean
+        notes:
+          type: string
+          nullable: true
+    CreateTrackedRepoInput:
+      type: object
+      required:
+        - id
+        - owner
+        - repo
+      properties:
+        id:
+          type: string
+        owner:
+          type: string
+        repo:
+          type: string
+        name:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        enabled:
+          type: boolean
+    UpdateTrackedRepoInput:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        name:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+    RepoSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        full_name:
+          type: string
+        current_goal:
+          type: string
+          nullable: true
+        status_summary:
+          type: string
+          nullable: true
+        last_activity_at:
+          type: string
+          format: date-time
+          nullable: true
+        milestone:
+          type: string
+          nullable: true
+        attention_flag:
+          type: boolean
+        attention_reasons:
+          type: array
+          items:
+            type: string
+        missing_sources:
+          type: array
+          items:
+            type: string
+        last_synced_at:
+          type: string
+          format: date-time
+          nullable: true
+        sync_error:
+          type: string
+          nullable: true
+    RepoDetail:
+      allOf:
+        - $ref: "#/components/schemas/RepoSummary"
+        - type: object
+          properties:
+            notes:
+              type: string
+              nullable: true
+            recent_updates:
+              type: array
+              items:
+                type: string
+            blockers:
+              type: array
+              items:
+                type: string
+            documentation_sources:
+              type: array
+              items:
+                type: string
+            github_activity:
+              type: array
+              items:
+                $ref: "#/components/schemas/GitHubEvent"
+    GitHubEvent:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        url:
+          type: string
+          nullable: true
+        occurred_at:
+          type: string
+          format: date-time
+          nullable: true
+    SyncResult:
+      type: object
+      properties:
+        repo_id:
+          type: string
+        synced:
+          type: boolean
+        sync_error:
+          type: string
+          nullable: true
+    SyncResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/SyncResult"
+        synced_count:
+          type: integer
+    SyncRun:
+      type: object
+      properties:
+        started_at:
+          type: string
+        finished_at:
+          type: string
+        synced_count:
+          type: integer
+        failed_count:
+          type: integer

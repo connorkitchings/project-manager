@@ -2,20 +2,20 @@
 
 ## Overview
 
-This guide establishes the architectural patterns for adding a web interface to Vibe Coding projects. The goal is "Progressive Disclosure"—allowing simple scripts to evolve into full apps without rewrite.
+This guide establishes architectural patterns for the Project Manager web application. The goal is to keep the repo status dashboard simple in v1 while leaving room to grow without a rewrite.
 
 ## Core Rules
 
 ### 1. Headless-First
 **Principle:** The API is the product; the UI is just a consumer.
--   Build your backend logic (FastAPI/Flask) as a standalone API first.
+-   Build your backend logic as a standalone Flask API first.
 -   Ensure your model/logic can be run via CLI or Cron without the web server.
 -   *Why?* Decoupling ensures your core logic remains portable and testable.
 
 ### 2. Component Silo
 **Principle:** The Frontend must never touch the Database directly.
--   **Forbidden:** Importing `src.db` or `pd.read_csv` directly in a Next.js component.
--   **Required:** Fetch data via the API (`/api/v1/...`).
+-   **Forbidden:** Importing backend storage modules or reading SQLite directly from React code.
+-   **Required:** Fetch data via the Flask API (`/api/...`).
 -   *Why?* Direct DB access from UI components creates a monolithic web of dependencies that is hard to refactor.
 
 ### 3. Server-Side State Strategy
@@ -28,22 +28,24 @@ This guide establishes the architectural patterns for adding a web interface to 
 
 | Layer | Tool | Note |
 |-------|------|------|
-| **Backend** | FastAPI | Type-safe, auto-docs (OpenAPI) |
-| **Frontend** | Vite + React | fast, simple build tool |
-| **API Client** | TanStack Query | For caching and state |
-| **Styling** | Tailwind | Utility-first (if preferred) |
+| **Backend** | Flask | Existing API layer and asset host |
+| **Frontend** | Vite + React + TypeScript | Separate UI app compiled into Flask-served assets |
+| **API Client** | TanStack Query | Cache and invalidation for repo/meta/sync requests |
+| **Styling** | Tailwind CSS | Utility-first styling with light design-token theming |
 
 ## Directory Structure
 
 ```text
 project/
 ├── src/                # Backend / Core Logic
-│   ├── api/            # FastAPI Routers
-│   └── processing/     # Data Logic
-├── ui/                 # Frontend (New Directory)
+│   └── project_manager/
+│       ├── api/        # Flask app and route handlers
+│       └── services/   # Sync, registry, and persistence logic
+├── ui/                 # Frontend application
 │   ├── src/
-│   │   ├── components/
-│   │   └── hooks/      # useQuery hooks
+│   │   ├── app/
+│   │   ├── features/
+│   │   └── lib/
 │   └── package.json
 └── docs/
     └── guides/

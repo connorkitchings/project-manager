@@ -14,13 +14,13 @@ This approach provides up to **80% token reduction** compared to raw HTML.
 
 ## Installation
 
-The markdown_fetcher is included in the Vibe Coding Template. Ensure dependencies are installed:
+The `markdown_fetcher` utility is included in this repository's current scaffold. Ensure dependencies are installed:
 
 ```bash
 uv sync
 ```
 
-The tool requires `requests>=2.31.0` which is already included in the template dependencies.
+The tool requires `requests>=2.31.0`, which is already included in the current project dependencies.
 
 ## Usage
 

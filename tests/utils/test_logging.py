@@ -1,13 +1,20 @@
-"""
-Test cases for the logging utility.
-"""
+"""Tests for the logging utility."""
 
-from vibe_coding.utils.logging import logger
+import logging
+
+from project_manager.utils.logging import get_logger, logger, setup_logging
 
 
 def test_logger_name():
-    assert logger.name == "Vibe Coding Data Science Template"
+    assert logger.name == "project_manager"
 
 
-def test_logger_level():
-    assert logger.level == 20  # INFO level
+def test_setup_logging_sets_root_level(tmp_path):
+    log_file = tmp_path / "app.log"
+    setup_logging(level="INFO", log_file=log_file)
+
+    named_logger = get_logger("project_manager.test")
+    named_logger.info("hello")
+
+    assert logging.getLogger().level == logging.INFO
+    assert log_file.exists()

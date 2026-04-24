@@ -24,26 +24,12 @@
 
 ## Development Skills
 
-### database-migration
-**Path**: `.agent/skills/database-migration/SKILL.md`
-**Purpose**: Create and apply database migrations safely using Alembic
-**Triggers**: "migration", "schema change", "database update", "alembic"
-**Outputs**: Migration file, rollback plan, test verification
-**Use when**: Modifying database schema, adding tables/columns
-
-### data-ingestion
-**Path**: `.agent/skills/data-ingestion/SKILL.md`
-**Purpose**: Implement data ingestion adapters for external sources
-**Triggers**: "ingestion", "data source", "adapter", "etl", "pipeline"
-**Outputs**: Ingestion adapter, validation logic, CLI script
-**Use when**: Adding new data sources, building ETL pipelines
-
 ### api-endpoint
 **Path**: `.agent/skills/api-endpoint/SKILL.md`
 **Purpose**: Create new API endpoint with validation and tests
-**Triggers**: "new endpoint", "API route", "create endpoint", "fastapi", "flask"
+**Triggers**: "new endpoint", "API route", "create endpoint", "flask"
 **Outputs**: Route handler, schemas, tests, API documentation
-**Use when**: Adding REST API endpoints
+**Use when**: Adding Flask REST API endpoints
 
 ### doc-writer
 **Path**: `.agent/skills/doc-writer/SKILL.md`
@@ -59,13 +45,6 @@
 **Outputs**: Test file with fixtures and comprehensive coverage
 **Use when**: Adding tests for features or bug fixes
 
-### mcp-workflow
-**Path**: `.agent/skills/mcp-workflow/SKILL.md`
-**Purpose**: Use MCP servers with fallback CLI commands
-**Triggers**: "mcp", "deployment", "deploy", "railway", "vercel"
-**Outputs**: Deployment commands or MCP operations
-**Use when**: Deploying to cloud platforms, managing infrastructure
-
 ---
 
 ## Utility Skills
@@ -76,13 +55,6 @@
 **Triggers**: "audit context", "context size", "optimize loading"
 **Outputs**: Context usage report, optimization recommendations
 **Use when**: Context budget is exceeded or session is slow
-
-### web-init
-**Path**: `.agent/skills/web-init/`
-**Purpose**: Initialize web project structure
-**Triggers**: "init web", "create web app", "setup frontend"
-**Outputs**: Web project scaffold
-**Use when**: Starting new web project
 
 ---
 

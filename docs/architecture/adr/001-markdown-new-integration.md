@@ -9,7 +9,7 @@
 
 ## Context
 
-The Vibe Coding Template needed a reliable way for AI agents to fetch web content as structured Markdown. Feeding raw HTML to AI models is inefficient, consuming 4-5x more tokens than necessary for the same content.
+This repository needed a reliable way for AI agents to fetch web content as structured Markdown. Feeding raw HTML to AI models is inefficient, consuming 4-5x more tokens than necessary for the same content.
 
 **Requirements**:
 - Convert web URLs to clean Markdown

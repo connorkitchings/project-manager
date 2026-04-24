@@ -60,8 +60,6 @@
 **Key Files**:
 - `src/data/` - Data access and ingestion
 - `alembic/` or migrations directory - Database migrations
-- `.agent/skills/database-migration/SKILL.md` - Migration workflow
-- `.agent/skills/data-ingestion/SKILL.md` - Ingestion workflow
 
 **Commands**:
 ```bash
