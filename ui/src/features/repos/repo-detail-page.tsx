@@ -1,13 +1,17 @@
+import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { useRepoDetail, useSyncRepos } from "@/features/repos/hooks";
 import {
   EmptyState,
+  FilterButton,
   PageBanner,
   SectionCard,
   Stat,
   StatusBadge,
   TimelineItem,
+  type TimelineFilterValue,
+  timelineFilters,
 } from "@/features/repos/ui";
 import { formatTimestamp } from "@/lib/format";
 
@@ -15,6 +19,13 @@ export function RepoDetailPage() {
   const { repoId } = useParams<{ repoId: string }>();
   const syncMutation = useSyncRepos();
   const repoQuery = useRepoDetail(repoId ?? "", Boolean(repoId));
+  const [timelineFilter, setTimelineFilter] = useState<TimelineFilterValue>("all");
+
+  const filteredActivity = useMemo(() => {
+    const activity = repoQuery.data?.github_activity ?? [];
+    if (timelineFilter === "all") return activity;
+    return activity.filter((event) => event.type === timelineFilter);
+  }, [repoQuery.data?.github_activity, timelineFilter]);
 
   if (!repoId) {
     return (
@@ -201,12 +212,22 @@ export function RepoDetailPage() {
           </SectionCard>
 
           <SectionCard
-            subtitle="Recent GitHub events used as freshness signals."
-            title="GitHub activity"
+            subtitle="Recent GitHub events used as freshness signals. Filter by event type."
+            title="Timeline"
           >
-            {repo.github_activity.length ? (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {timelineFilters.map((option) => (
+                <FilterButton
+                  active={timelineFilter === option.value}
+                  key={option.value}
+                  label={option.label}
+                  onClick={() => setTimelineFilter(option.value)}
+                />
+              ))}
+            </div>
+            {filteredActivity.length ? (
               <div className="space-y-3">
-                {repo.github_activity.map((event) => (
+                {filteredActivity.map((event) => (
                   <TimelineItem
                     event={event}
                     key={`${event.type}-${event.title}-${event.occurred_at ?? "unknown"}`}
@@ -215,7 +236,11 @@ export function RepoDetailPage() {
               </div>
             ) : (
               <EmptyState
-                body="No recent GitHub activity was available during the latest sync."
+                body={
+                  timelineFilter === "all"
+                    ? "No recent GitHub activity was available during the latest sync."
+                    : "No events match this filter."
+                }
                 title="No activity available"
               />
             )}

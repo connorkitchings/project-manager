@@ -298,4 +298,16 @@ export const dashboardFilters: Array<{
   { value: "missing", label: "Missing docs" },
 ];
 
+export type TimelineFilterValue = "all" | "commit" | "pull_request" | "issue";
+
+export const timelineFilters: Array<{
+  value: TimelineFilterValue;
+  label: string;
+}> = [
+  { value: "all", label: "All" },
+  { value: "commit", label: "Commits" },
+  { value: "pull_request", label: "PRs" },
+  { value: "issue", label: "Issues" },
+];
+
 export type { DashboardFilter };
