@@ -4,7 +4,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from enum import Enum
 from typing import Literal
+
+
+class RepoStatus(str, Enum):
+    """Typed health status for a tracked repository."""
+
+    healthy = "healthy"
+    active = "active"
+    stalled = "stalled"
+    blocked = "blocked"
+    error = "error"
+    unknown = "unknown"
 
 
 def _serialize_datetime(value: datetime | None) -> str | None:
@@ -123,6 +135,7 @@ class RepoSummary:
     missing_sources: list[str] = field(default_factory=list)
     last_synced_at: datetime | None = None
     sync_error: str | None = None
+    status: RepoStatus = RepoStatus.unknown
 
     def to_dict(self) -> dict:
         return {
@@ -138,6 +151,7 @@ class RepoSummary:
             "missing_sources": self.missing_sources,
             "last_synced_at": _serialize_datetime(self.last_synced_at),
             "sync_error": self.sync_error,
+            "status": self.status.value,
         }
 
 
@@ -166,6 +180,7 @@ class RepoDetail(RepoSummary):
             missing_sources=list(self.missing_sources),
             last_synced_at=self.last_synced_at,
             sync_error=self.sync_error,
+            status=self.status,
         )
 
     def to_dict(self) -> dict:

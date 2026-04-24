@@ -3,7 +3,7 @@
 from datetime import datetime, timedelta, timezone
 
 from project_manager.core.settings import Settings
-from project_manager.models import GitHubActivity, RepoDocumentBundle
+from project_manager.models import GitHubActivity, RepoDocumentBundle, RepoStatus
 from project_manager.services.normalizer import RepoStatusNormalizer
 
 
@@ -114,3 +114,64 @@ def test_normalizer_flags_missing_docs_and_staleness(tracked_repo):
     assert any(
         "No recent GitHub activity" in reason for reason in snapshot.attention_reasons
     )
+
+
+def test_normalizer_status_healthy(tracked_repo, sample_docs, sample_activity):
+    normalizer = RepoStatusNormalizer(Settings())
+    snapshot = normalizer.normalize(
+        tracked_repo,
+        sample_docs,
+        sample_activity,
+        synced_at=sample_activity.last_activity_at,
+    )
+    assert snapshot.status == RepoStatus.healthy
+
+
+def test_normalizer_status_stalled(tracked_repo, sample_docs):
+    now = datetime.now(timezone.utc)
+    stale = GitHubActivity(last_activity_at=now - timedelta(days=60))
+    normalizer = RepoStatusNormalizer(Settings(stale_after_days=30))
+    snapshot = normalizer.normalize(tracked_repo, sample_docs, stale, synced_at=now)
+    assert snapshot.status == RepoStatus.stalled
+
+
+def test_normalizer_status_blocked(tracked_repo, sample_activity):
+    now = datetime.now(timezone.utc)
+    docs = RepoDocumentBundle(
+        readme="# Repo\n\nSome project.\n",
+        latest_session_log=(
+            "**Goal:** Fix things.\n**Blockers:** CI pipeline is broken.\n"
+        ),
+        documentation_sources=["README.md"],
+        missing_sources=[],
+    )
+    normalizer = RepoStatusNormalizer(Settings())
+    snapshot = normalizer.normalize(tracked_repo, docs, sample_activity, synced_at=now)
+    assert snapshot.status == RepoStatus.blocked
+
+
+def test_normalizer_status_active(tracked_repo, sample_activity):
+    now = datetime.now(timezone.utc)
+    docs = RepoDocumentBundle(
+        readme="# Repo\n\nSome project.\n",
+        documentation_sources=["README.md"],
+        missing_sources=["docs/project_charter.md"],
+    )
+    normalizer = RepoStatusNormalizer(Settings())
+    snapshot = normalizer.normalize(tracked_repo, docs, sample_activity, synced_at=now)
+    assert snapshot.status == RepoStatus.active
+    assert snapshot.attention_flag is True
+
+
+def test_unsynced_snapshot_has_unknown_status(tracked_repo):
+    normalizer = RepoStatusNormalizer(Settings())
+    snapshot = normalizer.build_unsynced_snapshot(tracked_repo)
+    assert snapshot.status == RepoStatus.unknown
+
+
+def test_error_snapshot_has_error_status(tracked_repo):
+    now = datetime.now(timezone.utc)
+    normalizer = RepoStatusNormalizer(Settings())
+    snapshot = normalizer.build_error_snapshot(tracked_repo, "GitHub rate limit", now)
+    assert snapshot.status == RepoStatus.error
+    assert snapshot.sync_error == "GitHub rate limit"

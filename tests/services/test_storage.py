@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from project_manager.models import GitHubEvent, RepoDetail, TrackedRepo
+from project_manager.models import GitHubEvent, RepoDetail, RepoStatus, TrackedRepo
 from project_manager.services.storage import (
     SQLiteAppStateStore,
     TrackedRepoNotFoundError,
@@ -150,6 +150,27 @@ def test_delete_tracked_repo_cascades_snapshot(tmp_path):
     store.delete_tracked_repo("panicstats")
 
     assert store.get_snapshot("panicstats") is None
+
+
+def test_snapshot_round_trip_preserves_status(tmp_path):
+    database_path = tmp_path / "project_manager.db"
+    store = SQLiteAppStateStore(database_path)
+    store.create_tracked_repo(
+        TrackedRepo(id="panicstats", owner="connorkitchings", repo="panicstats")
+    )
+    store.upsert_snapshot(
+        RepoDetail(
+            id="panicstats",
+            name="PanicStats",
+            full_name="connorkitchings/panicstats",
+            status=RepoStatus.blocked,
+        )
+    )
+
+    reloaded = SQLiteAppStateStore(database_path).get_snapshot("panicstats")
+
+    assert reloaded is not None
+    assert reloaded.status == RepoStatus.blocked
 
 
 def test_bootstrap_preserves_runtime_managed_fields(tmp_path):

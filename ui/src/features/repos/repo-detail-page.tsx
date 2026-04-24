@@ -77,6 +77,7 @@ export function RepoDetailPage() {
               <StatusBadge
                 attention={repo.attention_flag}
                 hasError={Boolean(repo.sync_error)}
+                status={repo.status}
               />
             </div>
 

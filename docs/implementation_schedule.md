@@ -68,7 +68,7 @@ See `docs/v2_roadmap.md` for full feature descriptions and prioritization ration
 | Phase | Task | Owner | Deliverable | Status | Notes |
 |-------|------|-------|-------------|--------|-------|
 | 7.1 | Delete / Archive tracked repos | AI Assistant | `DELETE /api/tracked-repos/<id>` + UI | ✅ Done | Hard delete with confirmation UI (commit a5a3df4) |
-| 7.2 | Richer status field contract | Connor + AI Assistant | `RepoStatus` enum, tightened schema | ☐ Not Started | Foundational before building on top of the model |
+| 7.2 | Richer status field contract | Connor + AI Assistant | `RepoStatus` enum, tightened schema | ✅ Done | RepoStatus(str, Enum) in models.py; computed in normalizer; persisted in SQLite; typed in frontend |
 | 7.3 | Timeline view | AI Assistant | Merged event timeline on repo detail page | ☐ Not Started | All data already exists; frontend-only |
 | 7.4 | Stale / attention alerts | AI Assistant | Background sync + alert surface | ☐ Not Started | Requires scheduling; defer until status model is solid |
 | 7.5 | GitHub repository discovery | AI Assistant | Search + one-click add UI | ☐ Not Started | GitHub search API integration |

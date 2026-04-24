@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
 
-from project_manager.models import GitHubEvent, RepoDetail, TrackedRepo
+from project_manager.models import GitHubEvent, RepoDetail, RepoStatus, TrackedRepo
 
 _UNSET = object()
 
@@ -118,6 +118,13 @@ class SQLiteAppStateStore:
                     """
                     ALTER TABLE repo_snapshots
                     ADD COLUMN attention_reasons TEXT NOT NULL DEFAULT '[]'
+                    """
+                )
+            if "status" not in columns:
+                connection.execute(
+                    """
+                    ALTER TABLE repo_snapshots
+                    ADD COLUMN status TEXT NOT NULL DEFAULT 'unknown'
                     """
                 )
 
@@ -306,9 +313,9 @@ class SQLiteAppStateStore:
                     last_activity_at, attention_flag, attention_reasons,
                     missing_sources, last_synced_at, sync_error, notes,
                     recent_updates, blockers, github_activity,
-                    documentation_sources
+                    documentation_sources, status
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(repo_id) DO UPDATE SET
                     name = excluded.name,
                     full_name = excluded.full_name,
@@ -325,7 +332,8 @@ class SQLiteAppStateStore:
                     recent_updates = excluded.recent_updates,
                     blockers = excluded.blockers,
                     github_activity = excluded.github_activity,
-                    documentation_sources = excluded.documentation_sources
+                    documentation_sources = excluded.documentation_sources,
+                    status = excluded.status
                 """,
                 (
                     snapshot.id,
@@ -345,6 +353,7 @@ class SQLiteAppStateStore:
                     json.dumps(snapshot.blockers),
                     github_activity,
                     json.dumps(snapshot.documentation_sources),
+                    snapshot.status.value,
                 ),
             )
 
@@ -417,6 +426,11 @@ class SQLiteAppStateStore:
             )
             for event in json.loads(row["github_activity"])
         ]
+        try:
+            status = RepoStatus(row["status"])
+        except (ValueError, KeyError):
+            status = RepoStatus.unknown
+
         return RepoDetail(
             id=row["repo_id"],
             name=row["name"],
@@ -435,4 +449,5 @@ class SQLiteAppStateStore:
             blockers=json.loads(row["blockers"]),
             github_activity=github_activity,
             documentation_sources=json.loads(row["documentation_sources"]),
+            status=status,
         )

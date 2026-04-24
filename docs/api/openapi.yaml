@@ -245,6 +245,8 @@ components:
         sync_error:
           type: string
           nullable: true
+        status:
+          $ref: "#/components/schemas/RepoStatus"
     RepoDetail:
       allOf:
         - $ref: "#/components/schemas/RepoSummary"
@@ -302,6 +304,15 @@ components:
             $ref: "#/components/schemas/SyncResult"
         synced_count:
           type: integer
+    RepoStatus:
+      type: string
+      enum:
+        - healthy
+        - active
+        - stalled
+        - blocked
+        - error
+        - unknown
     SyncRun:
       type: object
       properties:

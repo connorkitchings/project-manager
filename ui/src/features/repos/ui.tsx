@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import clsx from "clsx";
 
 import { formatTimestamp, shortTypeLabel } from "@/lib/format";
-import type { GitHubEvent, RepoSummary, RootResponse } from "@/lib/api/types";
+import type { GitHubEvent, RepoStatus, RepoSummary, RootResponse } from "@/lib/api/types";
 
 type DashboardFilter = "all" | "attention" | "errors" | "missing";
 
@@ -34,24 +34,60 @@ interface StatusBadgeProps {
   attention: boolean;
   hasError?: boolean;
   label?: string;
+  status?: RepoStatus;
 }
+
+const STATUS_CONFIG: Record<
+  RepoStatus,
+  { label: string; className: string }
+> = {
+  healthy: { label: "Healthy", className: "bg-pine/15 text-pine" },
+  active: {
+    label: "Active",
+    className:
+      "bg-attention/15 text-[color:color-mix(in_srgb,var(--color-attention)_80%,black)]",
+  },
+  stalled: {
+    label: "Stalled",
+    className:
+      "bg-attention/15 text-[color:color-mix(in_srgb,var(--color-attention)_80%,black)]",
+  },
+  blocked: { label: "Blocked", className: "bg-danger/15 text-danger" },
+  error: { label: "Sync issue", className: "bg-danger/15 text-danger" },
+  unknown: {
+    label: "Unknown",
+    className:
+      "bg-attention/15 text-[color:color-mix(in_srgb,var(--color-attention)_80%,black)]",
+  },
+};
 
 export function StatusBadge({
   attention,
   hasError = false,
   label,
+  status,
 }: StatusBadgeProps) {
-  const resolvedLabel = label ?? (hasError ? "Sync issue" : attention ? "Needs review" : "Healthy");
+  let resolvedLabel: string;
+  let colorClass: string;
+
+  if (status !== undefined) {
+    const config = STATUS_CONFIG[status];
+    resolvedLabel = label ?? config.label;
+    colorClass = config.className;
+  } else {
+    resolvedLabel = label ?? (hasError ? "Sync issue" : attention ? "Needs review" : "Healthy");
+    colorClass = hasError
+      ? "bg-danger/15 text-danger"
+      : attention
+        ? "bg-attention/15 text-[color:color-mix(in_srgb,var(--color-attention)_80%,black)]"
+        : "bg-pine/15 text-pine";
+  }
 
   return (
     <span
       className={clsx(
         "inline-flex items-center rounded-full px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.22em]",
-        hasError && "bg-danger/15 text-danger",
-        !hasError &&
-          attention &&
-          "bg-attention/15 text-[color:color-mix(in_srgb,var(--color-attention)_80%,black)]",
-        !hasError && !attention && "bg-pine/15 text-pine",
+        colorClass,
       )}
     >
       {resolvedLabel}
@@ -182,6 +218,7 @@ export function RepoCard({ repo }: RepoCardProps) {
         <StatusBadge
           attention={repo.attention_flag}
           hasError={Boolean(repo.sync_error)}
+          status={repo.status}
         />
       </div>
       <p className="text-sm text-ink/70">

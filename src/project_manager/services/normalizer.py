@@ -10,6 +10,7 @@ from project_manager.models import (
     GitHubActivity,
     RepoDetail,
     RepoDocumentBundle,
+    RepoStatus,
     TrackedRepo,
 )
 
@@ -31,6 +32,7 @@ class RepoStatusNormalizer:
             missing_sources=["not_synced"],
             attention_flag=True,
             attention_reasons=["Not synced yet."],
+            status=RepoStatus.unknown,
         )
 
     def build_error_snapshot(
@@ -51,6 +53,7 @@ class RepoStatusNormalizer:
             missing_sources=["sync_failed"],
             sync_error=error,
             last_synced_at=synced_at,
+            status=RepoStatus.error,
         )
 
     def normalize(
@@ -127,6 +130,11 @@ class RepoStatusNormalizer:
             )
 
         attention_flag = bool(attention_reasons)
+        status = self._compute_status(
+            has_blockers=bool(blockers),
+            is_stale=is_stale,
+            has_attention=attention_flag,
+        )
 
         return RepoDetail(
             id=repo.id,
@@ -145,6 +153,7 @@ class RepoStatusNormalizer:
             blockers=blockers,
             github_activity=activity.flattened()[: self.settings.recent_activity_limit],
             documentation_sources=docs.documentation_sources,
+            status=status,
         )
 
     @staticmethod
@@ -267,3 +276,22 @@ class RepoStatusNormalizer:
         """Return whether a parsed field indicates no blockers/updates."""
         normalized = value.strip().lower()
         return normalized.startswith(("none", "no blockers", "n/a"))
+
+    @staticmethod
+    def _compute_status(
+        *,
+        has_blockers: bool,
+        is_stale: bool,
+        has_attention: bool,
+    ) -> RepoStatus:
+        """Derive a typed RepoStatus from normalized signals.
+
+        Priority order: blocked > stalled > active > healthy.
+        """
+        if has_blockers:
+            return RepoStatus.blocked
+        if is_stale:
+            return RepoStatus.stalled
+        if has_attention:
+            return RepoStatus.active
+        return RepoStatus.healthy
