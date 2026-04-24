@@ -55,6 +55,19 @@ paths:
         "409":
           description: Duplicate tracked repo id
   /api/tracked-repos/{repo_id}:
+    delete:
+      summary: Delete a tracked repository and its snapshot
+      parameters:
+        - name: repo_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Tracked repo deleted
+        "404":
+          description: Tracked repo not found
     patch:
       summary: Update tracked repo runtime fields
       parameters:
