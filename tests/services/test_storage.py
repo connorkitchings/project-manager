@@ -1,10 +1,14 @@
 """Tests for SQLite-backed app state storage."""
 
-import pytest
 from datetime import datetime, timezone
 
+import pytest
+
 from project_manager.models import GitHubEvent, RepoDetail, TrackedRepo
-from project_manager.services.storage import SQLiteAppStateStore, TrackedRepoNotFoundError
+from project_manager.services.storage import (
+    SQLiteAppStateStore,
+    TrackedRepoNotFoundError,
+)
 
 
 def test_bootstrap_persists_tracked_repos(tmp_path):
