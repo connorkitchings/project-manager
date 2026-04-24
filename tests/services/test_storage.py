@@ -173,6 +173,45 @@ def test_snapshot_round_trip_preserves_status(tmp_path):
     assert reloaded.status == RepoStatus.blocked
 
 
+def test_record_and_retrieve_sync_run(tmp_path):
+    database_path = tmp_path / "project_manager.db"
+    store = SQLiteAppStateStore(database_path)
+    started = datetime(2026, 4, 22, 10, 0, 0, tzinfo=timezone.utc)
+    finished = datetime(2026, 4, 22, 10, 5, 0, tzinfo=timezone.utc)
+
+    store.record_sync_run(
+        started_at=started,
+        finished_at=finished,
+        synced_count=3,
+        failed_count=1,
+    )
+    run = store.get_latest_sync_run()
+
+    assert run is not None
+    assert run["synced_count"] == 3
+    assert run["failed_count"] == 1
+
+
+def test_get_latest_sync_run_returns_none_when_empty(tmp_path):
+    database_path = tmp_path / "project_manager.db"
+    store = SQLiteAppStateStore(database_path)
+    assert store.get_latest_sync_run() is None
+
+
+def test_get_latest_sync_run_returns_most_recent(tmp_path):
+    database_path = tmp_path / "project_manager.db"
+    store = SQLiteAppStateStore(database_path)
+    t1 = datetime(2026, 4, 1, tzinfo=timezone.utc)
+    t2 = datetime(2026, 4, 22, tzinfo=timezone.utc)
+
+    store.record_sync_run(started_at=t1, finished_at=t1, synced_count=1, failed_count=0)
+    store.record_sync_run(started_at=t2, finished_at=t2, synced_count=5, failed_count=2)
+
+    run = store.get_latest_sync_run()
+    assert run is not None
+    assert run["synced_count"] == 5
+
+
 def test_bootstrap_preserves_runtime_managed_fields(tmp_path):
     database_path = tmp_path / "project_manager.db"
     store = SQLiteAppStateStore(database_path)

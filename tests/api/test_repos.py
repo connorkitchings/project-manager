@@ -5,7 +5,11 @@ from pathlib import Path
 
 from project_manager.api.main import create_app
 from project_manager.models import RepoDetail, SyncResponse, SyncResult, TrackedRepo
-from project_manager.services.storage import TrackedRepoNotFoundError
+from project_manager.services.github import GitHubAPIError
+from project_manager.services.storage import (
+    TrackedRepoExistsError,
+    TrackedRepoNotFoundError,
+)
 
 
 class FakeSnapshotStore:
@@ -233,3 +237,112 @@ def test_frontend_routes_serve_spa(tmp_path):
     asset = client.get("/assets/app.js")
     assert asset.status_code == 200
     assert "javascript" in asset.content_type
+
+
+def test_create_tracked_repo_invalid_id_type_returns_400(tmp_path):
+    app = create_app(
+        sync_service=FakeSyncService(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+
+    response = client.post(
+        "/api/tracked-repos",
+        json={"id": 123, "owner": "owner", "repo": "repo"},
+    )
+    assert response.status_code == 400
+    assert "detail" in response.get_json()
+
+
+def test_create_tracked_repo_invalid_enabled_type_returns_400(tmp_path):
+    app = create_app(
+        sync_service=FakeSyncService(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+
+    response = client.post(
+        "/api/tracked-repos",
+        json={"id": "x", "owner": "o", "repo": "r", "enabled": "yes"},
+    )
+    assert response.status_code == 400
+
+
+def test_create_tracked_repo_non_json_body_returns_400(tmp_path):
+    app = create_app(
+        sync_service=FakeSyncService(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+
+    response = client.post(
+        "/api/tracked-repos",
+        data="not json",
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+
+
+def test_create_tracked_repo_conflict_returns_409(tmp_path):
+    class ConflictSyncService(FakeSyncService):
+        def create_tracked_repo(self, **kwargs):
+            raise TrackedRepoExistsError("Already exists")
+
+    app = create_app(
+        sync_service=ConflictSyncService(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+
+    response = client.post(
+        "/api/tracked-repos",
+        json={"id": "x", "owner": "o", "repo": "r"},
+    )
+    assert response.status_code == 409
+
+
+def test_create_tracked_repo_github_error_returns_502(tmp_path):
+    class GithubErrorSyncService(FakeSyncService):
+        def create_tracked_repo(self, **kwargs):
+            raise GitHubAPIError("rate limit", status_code=403)
+
+    app = create_app(
+        sync_service=GithubErrorSyncService(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+
+    response = client.post(
+        "/api/tracked-repos",
+        json={"id": "x", "owner": "o", "repo": "r"},
+    )
+    assert response.status_code == 502
+
+
+def test_update_tracked_repo_not_found_returns_404(tmp_path):
+    class NotFoundSyncService(FakeSyncService):
+        def update_tracked_repo(self, repo_id, **updates):
+            raise TrackedRepoNotFoundError("not found")
+
+    app = create_app(
+        sync_service=NotFoundSyncService(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+
+    response = client.patch("/api/tracked-repos/nonexistent", json={"enabled": True})
+    assert response.status_code == 404
+
+
+def test_update_tracked_repo_bad_enabled_type_returns_400(tmp_path):
+    app = create_app(
+        sync_service=FakeSyncService(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+
+    response = client.patch(
+        "/api/tracked-repos/project-manager",
+        json={"enabled": "true"},
+    )
+    assert response.status_code == 400

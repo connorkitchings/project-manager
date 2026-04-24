@@ -175,3 +175,124 @@ def test_error_snapshot_has_error_status(tracked_repo):
     snapshot = normalizer.build_error_snapshot(tracked_repo, "GitHub rate limit", now)
     assert snapshot.status == RepoStatus.error
     assert snapshot.sync_error == "GitHub rate limit"
+
+
+# ---------------------------------------------------------------------------
+# Static helper method unit tests
+# ---------------------------------------------------------------------------
+
+
+def test_extract_session_field_with_colon():
+    text = "- **Goal:** Build the MVP"
+    assert RepoStatusNormalizer._extract_session_field(text, "Goal") == "Build the MVP"
+
+
+def test_extract_session_field_without_colon():
+    text = "**Goal** Refactor the parser"
+    assert (
+        RepoStatusNormalizer._extract_session_field(text, "Goal")
+        == "Refactor the parser"
+    )
+
+
+def test_extract_session_field_returns_none_for_missing():
+    assert RepoStatusNormalizer._extract_session_field("No goal here", "Goal") is None
+    assert RepoStatusNormalizer._extract_session_field(None, "Goal") is None
+
+
+def test_extract_emphasized_value_basic():
+    text = "**Current Stage:** Backend MVP"
+    assert (
+        RepoStatusNormalizer._extract_emphasized_value(text, "Current Stage")
+        == "Backend MVP"
+    )
+
+
+def test_extract_emphasized_value_returns_none():
+    assert (
+        RepoStatusNormalizer._extract_emphasized_value("No match here", "Phase") is None
+    )
+    assert RepoStatusNormalizer._extract_emphasized_value(None, "Phase") is None
+
+
+def test_extract_first_action_item_bullet():
+    text = "## Immediate Next Steps\n- Build the sync service\n- Add tests\n"
+    assert (
+        RepoStatusNormalizer._extract_first_action_item(text)
+        == "Build the sync service"
+    )
+
+
+def test_extract_first_action_item_numbered():
+    text = "## Next Steps\n1. Deploy to production\n2. Monitor logs\n"
+    assert (
+        RepoStatusNormalizer._extract_first_action_item(text) == "Deploy to production"
+    )
+
+
+def test_extract_first_action_item_no_section():
+    text = "# README\n\nSome content without a next steps section.\n"
+    assert RepoStatusNormalizer._extract_first_action_item(text) is None
+
+
+def test_first_content_paragraph_skips_heading_and_metadata():
+    # Metadata pattern requires colon OUTSIDE **: **Key**: value
+    text = (
+        "# Project Manager\n\n"
+        "**Version**: 0.1.0\n**Status**: Active\n\n"
+        "Internal dashboard for repo status.\n"
+    )
+    result = RepoStatusNormalizer._first_content_paragraph(text)
+    assert result == "Internal dashboard for repo status."
+
+
+def test_first_content_paragraph_returns_none_for_all_metadata():
+    # All paragraphs are metadata-style (**Key**: value)
+    text = "**Status**: Active\n**Version**: 1.0\n"
+    assert RepoStatusNormalizer._first_content_paragraph(text) is None
+
+
+def test_first_content_paragraph_returns_none_for_empty():
+    assert RepoStatusNormalizer._first_content_paragraph(None) is None
+    assert RepoStatusNormalizer._first_content_paragraph("") is None
+
+
+def test_find_blocked_schedule_items_finds_warning_lines():
+    text = (
+        "| 7.4 | Stale alerts | AI | Alerts | ⚠ Risk/Blocked | Requires scheduling |\n"
+    )
+    result = RepoStatusNormalizer._find_blocked_schedule_items(text)
+    assert len(result) == 1
+    assert "⚠" in result[0]
+
+
+def test_find_blocked_schedule_items_empty():
+    assert RepoStatusNormalizer._find_blocked_schedule_items(None) == []
+    assert RepoStatusNormalizer._find_blocked_schedule_items("No warnings here") == []
+
+
+def test_extract_summary_paragraph_basic():
+    text = "## Summary\n\nCompleted all planned phases.\n\n## Next Steps\n\nFoo.\n"
+    assert (
+        RepoStatusNormalizer._extract_summary_paragraph(text)
+        == "Completed all planned phases."
+    )
+
+
+def test_extract_summary_paragraph_returns_none_when_absent():
+    assert (
+        RepoStatusNormalizer._extract_summary_paragraph("# No summary section") is None
+    )
+    assert RepoStatusNormalizer._extract_summary_paragraph(None) is None
+
+
+def test_is_non_blocker_value_positive_cases():
+    assert RepoStatusNormalizer._is_non_blocker_value("None") is True
+    assert RepoStatusNormalizer._is_non_blocker_value("No blockers") is True
+    assert RepoStatusNormalizer._is_non_blocker_value("N/A") is True
+    assert RepoStatusNormalizer._is_non_blocker_value("none (all green)") is True
+
+
+def test_is_non_blocker_value_negative_cases():
+    assert RepoStatusNormalizer._is_non_blocker_value("CI pipeline is broken") is False
+    assert RepoStatusNormalizer._is_non_blocker_value("Waiting on PR review") is False
