@@ -7,7 +7,16 @@ import { renderWithAppProviders } from "@/test/utils";
 
 describe("RepoSettingsPage", () => {
   beforeEach(() => {
-    const trackedRepos = [
+    const trackedRepos: Array<{
+      id: string;
+      owner: string;
+      repo: string;
+      full_name: string;
+      name: string | null;
+      display_name: string;
+      enabled: boolean;
+      notes: string | null;
+    }> = [
       {
         id: "project-manager",
         owner: "connorkitchings",

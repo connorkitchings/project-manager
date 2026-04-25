@@ -54,7 +54,7 @@ export function RepoDetailPage() {
     );
   }
 
-  const repo = repoQuery.data;
+  const repo = repoQuery.data!;
 
   return (
     <div className="space-y-6">

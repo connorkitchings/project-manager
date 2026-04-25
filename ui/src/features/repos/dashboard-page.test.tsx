@@ -115,7 +115,7 @@ describe("DashboardPage", () => {
 
   it("triggers a sync mutation", async () => {
     const user = userEvent.setup();
-    const fetchMock = global.fetch as ReturnType<typeof vi.fn>;
+    const fetchMock = globalThis.fetch as ReturnType<typeof vi.fn>;
 
     renderWithAppProviders(<DashboardPage />);
     await screen.findByText("Project Manager");

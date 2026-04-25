@@ -459,7 +459,7 @@ export function RepoSettingsPage() {
             body={trackedReposQuery.error.message}
             title="Unable to load tracked repos"
           />
-        ) : trackedReposQuery.data.length === 0 ? (
+        ) : !trackedReposQuery.data || trackedReposQuery.data.length === 0 ? (
           <EmptyState
             body="Add the first tracked repo to start managing dashboard coverage."
             title="No tracked repos configured"
