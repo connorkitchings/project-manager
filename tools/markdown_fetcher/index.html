@@ -1,0 +1,1309 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Internal dashboard for reviewing the status of selected GitHub repositories.">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>Markdown Fetcher Tool - Project Manager</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#markdown-fetcher-tool" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Project Manager" class="md-header__button md-logo" aria-label="Project Manager" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Project Manager
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Markdown Fetcher Tool
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../project_brief/" class="md-tabs__link">
+          
+  
+  
+  Product
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/system_overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../runbook/" class="md-tabs__link">
+          
+  
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../template_starting_guide/" class="md-tabs__link">
+          
+  
+  
+  Legacy
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Project Manager" class="md-nav__button md-logo" aria-label="Project Manager" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Project Manager
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Product
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Product
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Project Brief
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_charter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Project Charter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation_schedule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Implementation Schedule
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../v2_roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    v2 Roadmap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/system_overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    System Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API Direction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/adr/adr-0001-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ADR
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Operations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Operations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Runbook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development_standards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Development Standards
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../checklists/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Checklists
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../knowledge_base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Knowledge Base
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Glossary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ai_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Legacy
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Legacy
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../template_starting_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Repository Transition Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../template_testing_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Validation Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../template_migration_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Legacy Cleanup Notes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="markdown-fetcher-tool">Markdown Fetcher Tool</h1>
+<p>The Markdown Fetcher is a utility for fetching web content and converting it to clean Markdown using <a href="https://markdown.new/">markdown.new</a>. This is particularly useful for AI agents that need structured data from web pages.</p>
+<h2 id="overview">Overview</h2>
+<p>The markdown_fetcher module provides a 3-tier fallback strategy for converting web content to Markdown:</p>
+<ol>
+<li><strong>Tier 1 - Native Method</strong>: Tries to fetch with <code>Accept: text/markdown</code> header (fastest)</li>
+<li><strong>Tier 2 - Workers AI</strong>: Uses Cloudflare Workers AI for HTML-to-Markdown conversion</li>
+<li><strong>Tier 3 - Browser Rendering</strong>: Uses Cloudflare Browser Rendering for JS-heavy pages</li>
+</ol>
+<p>This approach provides up to <strong>80% token reduction</strong> compared to raw HTML.</p>
+<h2 id="installation">Installation</h2>
+<p>The <code>markdown_fetcher</code> utility is included in this repository's current scaffold. Ensure dependencies are installed:</p>
+<pre><code class="language-bash">uv sync
+</code></pre>
+<p>The tool requires <code>requests&gt;=2.31.0</code>, which is already included in the current project dependencies.</p>
+<h2 id="usage">Usage</h2>
+<h3 id="basic-usage">Basic Usage</h3>
+<pre><code class="language-python">from vibe_coding.utils.markdown_fetcher import fetch_markdown
+
+result = fetch_markdown(&quot;https://example.com&quot;)
+print(result.content)
+print(f&quot;Tokens: {result.metadata.token_count}&quot;)
+print(f&quot;Method: {result.metadata.method_used}&quot;)
+</code></pre>
+<h3 id="custom-configuration">Custom Configuration</h3>
+<pre><code class="language-python">from vibe_coding.utils.markdown_fetcher import fetch_markdown, MarkdownFetcherConfig
+
+config = MarkdownFetcherConfig(
+    method=&quot;ai&quot;,           # Use only Workers AI
+    retain_images=True,     # Keep images in output
+    timeout=60,            # 60 second timeout
+    max_retries=5,        # Retry up to 5 times
+    backoff_factor=3.0,    # Exponential backoff multiplier
+)
+
+result = fetch_markdown(&quot;https://example.com&quot;, config)
+</code></pre>
+<h3 id="configuration-options">Configuration Options</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>method</code></td>
+<td><code>"auto"</code>, <code>"ai"</code>, <code>"browser"</code></td>
+<td><code>"auto"</code></td>
+<td>Conversion method to use. <code>"auto"</code> tries all tiers.</td>
+</tr>
+<tr>
+<td><code>retain_images</code></td>
+<td>bool</td>
+<td><code>False</code></td>
+<td>Whether to include images in the output.</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>int</td>
+<td><code>30</code></td>
+<td>Request timeout in seconds. Browser rendering uses minimum 60s.</td>
+</tr>
+<tr>
+<td><code>max_retries</code></td>
+<td>int</td>
+<td><code>3</code></td>
+<td>Maximum number of retry attempts for failed requests.</td>
+</tr>
+<tr>
+<td><code>backoff_factor</code></td>
+<td>float</td>
+<td><code>2.0</code></td>
+<td>Exponential backoff multiplier for retries.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="method-selection">Method Selection</h3>
+<ul>
+<li><strong><code>auto</code></strong> (default): Tries all three tiers in order</li>
+<li>Best for general use</li>
+<li>Fastest possible with fallbacks</li>
+<li>
+<p>Automatic handling of different page types</p>
+</li>
+<li>
+<p><strong><code>ai</code></strong>: Only uses Workers AI</p>
+</li>
+<li>Good when you know the site doesn't support native markdown</li>
+<li>Faster than browser rendering</li>
+<li>
+<p>May not work with heavily JavaScript-based pages</p>
+</li>
+<li>
+<p><strong><code>browser</code></strong>: Only uses Browser Rendering</p>
+</li>
+<li>Best for JS-heavy single-page applications</li>
+<li>Slowest but most reliable for complex pages</li>
+<li>Minimum 60-second timeout</li>
+</ul>
+<h2 id="error-handling">Error Handling</h2>
+<p>The tool provides specific exception types for different failure scenarios:</p>
+<pre><code class="language-python">from vibe_coding.utils.markdown_fetcher import (
+    fetch_markdown,
+    MarkdownFetchError,
+    MarkdownTimeoutError,
+    MarkdownRateLimitError,
+    MarkdownValidationError,
+)
+
+try:
+    result = fetch_markdown(&quot;https://example.com&quot;)
+except MarkdownValidationError as e:
+    print(f&quot;Invalid URL: {e}&quot;)
+except MarkdownTimeoutError as e:
+    print(f&quot;Request timed out: {e}&quot;)
+except MarkdownRateLimitError as e:
+    print(f&quot;Rate limit exceeded: {e}&quot;)
+except MarkdownFetchError as e:
+    print(f&quot;Fetch failed: {e}&quot;)
+</code></pre>
+<h3 id="exception-types">Exception Types</h3>
+<table>
+<thead>
+<tr>
+<th>Exception</th>
+<th>When Raised</th>
+<th>Typical Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MarkdownValidationError</code></td>
+<td>URL is malformed or uses unsupported scheme</td>
+<td>Invalid URL, file://, javascript:, data:</td>
+</tr>
+<tr>
+<td><code>MarkdownTimeoutError</code></td>
+<td>Request exceeds timeout</td>
+<td>Slow server, large page, network issues</td>
+</tr>
+<tr>
+<td><code>MarkdownRateLimitError</code></td>
+<td>markdown.new rate limit exceeded</td>
+<td>Too many requests in short period</td>
+</tr>
+<tr>
+<td><code>MarkdownFetchError</code></td>
+<td>All retries exhausted</td>
+<td>Persistent network/server errors</td>
+</tr>
+</tbody>
+</table>
+<h2 id="examples">Examples</h2>
+<h3 id="example-1-fetch-a-blog-post">Example 1: Fetch a Blog Post</h3>
+<pre><code class="language-python">from vibe_coding.utils.markdown_fetcher import fetch_markdown
+
+url = &quot;https://blog.example.com/post/interesting-article&quot;
+result = fetch_markdown(url)
+
+print(f&quot;Content ({result.metadata.token_count} tokens):&quot;)
+print(result.content[:500] + &quot;...&quot;)
+</code></pre>
+<h3 id="example-2-fetch-documentation-with-images">Example 2: Fetch Documentation with Images</h3>
+<pre><code class="language-python">from vibe_coding.utils.markdown_fetcher import fetch_markdown, MarkdownFetcherConfig
+
+config = MarkdownFetcherConfig(retain_images=True)
+result = fetch_markdown(&quot;https://docs.example.com&quot;, config)
+
+print(f&quot;Fetched using {result.metadata.method_used} method&quot;)
+print(f&quot;Response time: {result.metadata.response_time_ms:.0f}ms&quot;)
+</code></pre>
+<h3 id="example-3-retry-aggressive-retry-for-unstable-sites">Example 3: Retry Aggressive Retry for Unstable Sites</h3>
+<pre><code class="language-python">from vibe_coding.utils.markdown_fetcher import fetch_markdown, MarkdownFetcherConfig
+
+config = MarkdownFetcherConfig(
+    max_retries=10,        # Try up to 10 times
+    backoff_factor=1.5,      # Slower backoff
+    timeout=90,              # Longer timeout
+)
+
+result = fetch_markdown(&quot;https://unstable.example.com&quot;, config)
+</code></pre>
+<h3 id="example-4-browser-rendering-for-spa">Example 4: Browser Rendering for SPA</h3>
+<pre><code class="language-python">from vibe_coding.utils.markdown_fetcher import fetch_markdown, MarkdownFetcherConfig
+
+config = MarkdownFetcherConfig(
+    method=&quot;browser&quot;,     # Force browser rendering
+    timeout=120,           # 2 minute timeout for complex pages
+)
+
+result = fetch_markdown(&quot;https://react-app.example.com&quot;, config)
+</code></pre>
+<h2 id="advanced-usage">Advanced Usage</h2>
+<h3 id="accessing-metadata">Accessing Metadata</h3>
+<pre><code class="language-python">result = fetch_markdown(&quot;https://example.com&quot;)
+
+metadata = result.metadata
+print(f&quot;Tokens: {metadata.token_count}&quot;)
+print(f&quot;Method: {metadata.method_used}&quot;)
+print(f&quot;Status: {metadata.status_code}&quot;)
+print(f&quot;Response time: {metadata.response_time_ms:.0f}ms&quot;)
+</code></pre>
+<h3 id="custom-retry-strategy">Custom Retry Strategy</h3>
+<p>For rate-limited APIs or unstable sites, configure aggressive retry:</p>
+<pre><code class="language-python">config = MarkdownFetcherConfig(
+    max_retries=5,        # More retries
+    backoff_factor=4.0,      # Faster backoff growth
+)
+
+result = fetch_markdown(&quot;https://rate-limited.com&quot;, config)
+</code></pre>
+<h2 id="performance-considerations">Performance Considerations</h2>
+<h3 id="token-efficiency">Token Efficiency</h3>
+<ul>
+<li><strong>Native markdown</strong>: Fastest, no conversion needed</li>
+<li><strong>Workers AI</strong>: ~100-200ms additional latency</li>
+<li><strong>Browser Rendering</strong>: ~1-3s additional latency</li>
+</ul>
+<p>Choose the method that balances speed and accuracy for your use case.</p>
+<h3 id="timeout-guidelines">Timeout Guidelines</h3>
+<table>
+<thead>
+<tr>
+<th>Page Type</th>
+<th>Recommended Method</th>
+<th>Timeout</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Static HTML</td>
+<td><code>auto</code> or <code>ai</code></td>
+<td>30s</td>
+</tr>
+<tr>
+<td>Dynamic with some JS</td>
+<td><code>auto</code></td>
+<td>45s</td>
+</tr>
+<tr>
+<td>Heavy SPA/React/Vue</td>
+<td><code>browser</code></td>
+<td>90-120s</td>
+</tr>
+</tbody>
+</table>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="rate-limit-exceeded-errors">"Rate limit exceeded" errors</h3>
+<p><strong>Problem</strong>: Receiving <code>MarkdownRateLimitError</code></p>
+<p><strong>Solutions</strong>:
+1. Increase <code>backoff_factor</code> for longer delays between retries
+2. Add delays between fetches in your application
+3. Implement request queuing or caching</p>
+<h3 id="timeout-errors">Timeout errors</h3>
+<p><strong>Problem</strong>: <code>MarkdownTimeoutError</code> on complex pages</p>
+<p><strong>Solutions</strong>:
+1. Increase <code>timeout</code> value (especially for <code>browser</code> method)
+2. Switch to <code>browser</code> method for JS-heavy pages
+3. Check network connectivity</p>
+<h3 id="sslcertificate-errors">SSL/Certificate errors</h3>
+<p><strong>Problem</strong>: SSL verification failures</p>
+<p><strong>Solutions</strong>:
+1. The tool uses system certificates - ensure they're up to date
+2. For development only, you can disable verification (not recommended for production)</p>
+<h3 id="empty-or-incorrect-content">Empty or incorrect content</h3>
+<p><strong>Problem</strong>: Content doesn't match expected page</p>
+<p><strong>Solutions</strong>:
+1. Check if the page requires JavaScript - use <code>method="browser"</code>
+2. Verify the URL is correct and publicly accessible
+3. Check <code>result.metadata.method_used</code> to see which tier succeeded</p>
+<h2 id="testing">Testing</h2>
+<p>The module includes comprehensive tests with 95% coverage:</p>
+<pre><code class="language-bash"># Run all markdown fetcher tests
+uv run pytest tests/utils/test_markdown_fetcher.py -v
+
+# Run with coverage
+uv run pytest tests/utils/test_markdown_fetcher.py --cov=vibe_coding.utils.markdown_fetcher
+</code></pre>
+<h2 id="architecture-decision">Architecture Decision</h2>
+<p>See <a href="../../architecture/adr/001-markdown-new-integration/">ADR-001: Markdown.new Integration</a> for the decision to use markdown.new as an external-only dependency.</p>
+<h2 id="related-tools">Related Tools</h2>
+<ul>
+<li><strong>Web Scraping</strong>: For more complex scraping needs, consider <code>scrapy</code> or <code>beautifulsoup4</code></li>
+<li><strong>HTML Parsing</strong>: The tool handles HTML-to-Markdown conversion automatically</li>
+<li><strong>Caching</strong>: Consider adding local caching for frequently accessed URLs</li>
+</ul>
+<h2 id="limitations">Limitations</h2>
+<ol>
+<li><strong>External Dependency</strong>: Requires internet connectivity to markdown.new</li>
+<li><strong>Rate Limits</strong>: markdown.new may rate limit excessive requests</li>
+<li><strong>JavaScript</strong>: Only <code>browser</code> method fully handles client-side rendering</li>
+<li><strong>Authentication</strong>: Does not currently support authenticated requests</li>
+<li><strong>Cookies/Sessions</strong>: Does not maintain session state across requests</li>
+</ol>
+<h2 id="future-enhancements">Future Enhancements</h2>
+<p>Potential improvements for future versions:</p>
+<ul>
+<li>[ ] Local fallback using <code>html2text</code> or similar</li>
+<li>[ ] Request caching to avoid repeated fetches</li>
+<li>[ ] Support for authenticated requests</li>
+<li>[ ] Session management for cookie-based auth</li>
+<li>[ ] Batch fetching multiple URLs</li>
+<li>[ ] Custom headers support for API keys</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://markdown.new/">markdown.new Documentation</a></li>
+<li><a href="https://developers.cloudflare.com/workers-ai/">Cloudflare Workers AI</a></li>
+<li><a href="https://developers.cloudflare.com/browser-rendering/">Cloudflare Browser Rendering</a></li>
+</ul>
+<hr />
+<p><strong>Last Updated</strong>: 2026-02-15
+<strong>Version</strong>: 1.0.0</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

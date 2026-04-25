@@ -1,0 +1,1221 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Internal dashboard for reviewing the status of selected GitHub repositories.">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>cli-continues — Session Handoff Tool - Project Manager</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cli-continues-session-handoff-tool" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Project Manager" class="md-header__button md-logo" aria-label="Project Manager" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Project Manager
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              cli-continues — Session Handoff Tool
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../project_brief/" class="md-tabs__link">
+          
+  
+  
+  Product
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/system_overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../runbook/" class="md-tabs__link">
+          
+  
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../template_starting_guide/" class="md-tabs__link">
+          
+  
+  
+  Legacy
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Project Manager" class="md-nav__button md-logo" aria-label="Project Manager" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Project Manager
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Product
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Product
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Project Brief
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_charter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Project Charter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation_schedule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Implementation Schedule
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../v2_roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    v2 Roadmap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/system_overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    System Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API Direction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/adr/adr-0001-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ADR
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Operations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Operations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Runbook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development_standards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Development Standards
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../checklists/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Checklists
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../knowledge_base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Knowledge Base
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Glossary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ai_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Legacy
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Legacy
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../template_starting_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Repository Transition Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../template_testing_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Validation Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../template_migration_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Legacy Cleanup Notes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="cli-continues-session-handoff-tool">cli-continues — Session Handoff Tool</h1>
+<blockquote>
+<p>Never lose context when switching between AI coding tools.</p>
+</blockquote>
+<p><code>cli-continues</code> is an optional utility that enables seamless session handoff between AI coding assistants. It reads session data from any supported tool and can inject that context into another tool.</p>
+<hr />
+<h2 id="what-it-does">What It Does</h2>
+<ul>
+<li><strong>Session Discovery</strong> — Scans all supported tools for existing sessions</li>
+<li><strong>Cross-tool Handoff</strong> — Transfer context between Claude, Copilot, Gemini, Codex, OpenCode, Factory Droid, and Cursor</li>
+<li><strong>Context Extraction</strong> — Pulls conversation history, file changes, tool activity, and AI reasoning</li>
+<li><strong>Quick Resume</strong> — One-command resume from any tool</li>
+</ul>
+<hr />
+<h2 id="supported-tools">Supported Tools</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Session Location</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Code</td>
+<td><code>~/.claude/projects/</code></td>
+<td>JSONL</td>
+</tr>
+<tr>
+<td>GitHub Copilot</td>
+<td><code>~/.copilot/session-state/</code></td>
+<td>YAML + JSONL</td>
+</tr>
+<tr>
+<td>Gemini CLI</td>
+<td><code>~/.gemini/tmp/*/chats/</code></td>
+<td>JSON</td>
+</tr>
+<tr>
+<td>OpenAI Codex</td>
+<td><code>~/.codex/sessions/</code></td>
+<td>JSONL</td>
+</tr>
+<tr>
+<td>OpenCode</td>
+<td><code>~/.local/share/opencode/</code></td>
+<td>SQLite</td>
+</tr>
+<tr>
+<td>Factory Droid</td>
+<td><code>~/.factory/sessions/</code></td>
+<td>JSONL + JSON</td>
+</tr>
+<tr>
+<td>Cursor CLI</td>
+<td><code>~/.cursor/projects/*/agent-transcripts/</code></td>
+<td>JSONL</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="installation">Installation</h2>
+<h3 id="option-1-npx-no-install">Option 1: npx (No Install)</h3>
+<pre><code class="language-bash">npx continues
+</code></pre>
+<h3 id="option-2-global-install">Option 2: Global Install</h3>
+<pre><code class="language-bash">npm install -g continues
+</code></pre>
+<p>Both <code>continues</code> and <code>cont</code> commands work after global install.</p>
+<hr />
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="interactive-mode-default">Interactive Mode (Default)</h3>
+<pre><code class="language-bash">continues
+</code></pre>
+<p>This opens a TUI to:
+1. Browse/filter sessions across all tools
+2. Select a session to resume
+3. Choose target tool for handoff</p>
+<h3 id="list-all-sessions">List All Sessions</h3>
+<pre><code class="language-bash">continues list
+</code></pre>
+<h3 id="resume-specific-session">Resume Specific Session</h3>
+<pre><code class="language-bash"># Resume latest Claude session in Gemini
+continues resume abc123 --in gemini
+
+# Resume specific session by ID
+continues resume &lt;session-id&gt;
+</code></pre>
+<h3 id="quick-resume-native">Quick Resume (Native)</h3>
+<pre><code class="language-bash">continues claude        # Latest Claude session
+continues codex 3       # 3rd most recent Codex session
+continues copilot       # Latest Copilot session
+continues gemini 2      # 2nd most recent Gemini session
+</code></pre>
+<hr />
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li><strong>Node.js 22+</strong> — Uses built-in <code>node:sqlite</code> for OpenCode parsing</li>
+<li>At least one of the supported AI coding tools installed</li>
+</ul>
+<p>Check Node version:</p>
+<pre><code class="language-bash">node --version
+</code></pre>
+<hr />
+<h2 id="usage-with-vibe-coding-template">Usage with Vibe-Coding Template</h2>
+<h3 id="session-handoff-workflow">Session Handoff Workflow</h3>
+<ol>
+<li><strong>End Session</strong> — When finishing a session, optionally run <code>continues</code> to prepare for handoff</li>
+<li><strong>Start Session</strong> — When starting a new session in a different tool, use <code>continues</code> to inject previous context</li>
+<li><strong>Cross-tool Work</strong> — Switch tools mid-project without losing context</li>
+</ol>
+<h3 id="example-workflow">Example Workflow</h3>
+<pre><code class="language-bash"># You're working in Claude Code, hit rate limit
+# Save session and prepare for handoff:
+continues
+
+# Later, continue in Gemini CLI:
+continues resume &lt;session-id&gt; --in gemini
+</code></pre>
+<hr />
+<h2 id="integration-with-template-skills">Integration with Template Skills</h2>
+<h3 id="end-session-optional">End Session (Optional)</h3>
+<p>When using the end-session skill, you can optionally:
+1. Run <code>continues</code> to make session discoverable
+2. Note the session ID in handoff notes</p>
+<h3 id="start-session-optional">Start Session (Optional)</h3>
+<p>When using the start-session skill, you can optionally:
+1. Run <code>continues list</code> to find previous sessions
+2. Use <code>continues resume &lt;id&gt; --in &lt;tool&gt;</code> to inject context</p>
+<p>See <code>.agent/workflows/session-handoff.md</code> for detailed workflow.</p>
+<hr />
+<h2 id="output-formats">Output Formats</h2>
+<h3 id="list-output">List Output</h3>
+<pre><code>Found 894 sessions (showing 5):
+
+[claude]   2026-02-19 05:28  dev-test/SuperCmd     SSH tunnel config debugging         84a36c5d
+[copilot]  2026-02-19 04:41  migrate-to-tauri      Copy Presets From Electron          c2f5974c
+[codex]    2026-02-18 23:12  cli-continues         Fix OpenCode SQLite parser          a1e90b3f
+[gemini]   2026-02-18 05:10  my-project            Tauri window management             96315428
+[opencode] 2026-02-14 17:12  codex-session-picker  Where does Codex save JSON files    ses_3a2d
+</code></pre>
+<h3 id="json-output">JSON Output</h3>
+<pre><code class="language-bash">continues list --json
+continues list --jsonl -n 10
+</code></pre>
+<hr />
+<h2 id="session-index">Session Index</h2>
+<ul>
+<li><strong>Cached at</strong>: <code>~/.continues/sessions.jsonl</code></li>
+<li><strong>Auto-refresh</strong>: 5 minute TTL</li>
+<li><strong>Force rebuild</strong>: <code>continues rebuild</code></li>
+</ul>
+<hr />
+<h2 id="commands-reference">Commands Reference</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>continues</code></td>
+<td>Interactive TUI picker</td>
+</tr>
+<tr>
+<td><code>continues list</code></td>
+<td>List all sessions</td>
+</tr>
+<tr>
+<td><code>continues list --source claude</code></td>
+<td>Filter by tool</td>
+</tr>
+<tr>
+<td><code>continues resume &lt;id&gt;</code></td>
+<td>Resume by session ID</td>
+</tr>
+<tr>
+<td><code>continues resume &lt;id&gt; --in &lt;tool&gt;</code></td>
+<td>Cross-tool handoff</td>
+</tr>
+<tr>
+<td><code>continues scan</code></td>
+<td>Show session discovery stats</td>
+</tr>
+<tr>
+<td><code>continues rebuild</code></td>
+<td>Force-rebuild session index</td>
+</tr>
+<tr>
+<td><code>continues &lt;tool&gt; [n]</code></td>
+<td>Quick-resume Nth session</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="no-sessions-found">No sessions found</h3>
+<pre><code class="language-bash"># Rebuild index
+continues rebuild
+</code></pre>
+<h3 id="node-version-error">Node version error</h3>
+<pre><code class="language-bash"># Install Node.js 22+
+nvm install 22
+nvm use 22
+</code></pre>
+<h3 id="session-not-appearing">Session not appearing</h3>
+<ul>
+<li>Check that the AI tool has been used at least once</li>
+<li>Verify session directory exists (see table above)</li>
+<li>Run <code>continues scan</code> to see discovered sessions</li>
+</ul>
+<hr />
+<h2 id="why-use-it">Why Use It?</h2>
+<p>Have you ever:
+- Hit a rate limit mid-debugging session?
+- Needed to switch tools for a specific capability?
+- Lost context when continuing in a different CLI?</p>
+<p><code>cli-continues</code> solves this by extracting your conversation history, file changes, and AI reasoning — then injecting it into your target tool.</p>
+<hr />
+<h2 id="links">Links</h2>
+<ul>
+<li>GitHub: <a href="https://github.com/yigitkonur/cli-continues">yigitkonur/cli-continues</a></li>
+<li>npm: <a href="https://www.npmjs.com/package/continues">continues</a></li>
+<li>Template context: <code>.agent/CONTEXT.md</code></li>
+<li>Session handoff workflow: <code>.agent/workflows/session-handoff.md</code></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
