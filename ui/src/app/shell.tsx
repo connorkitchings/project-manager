@@ -1,6 +1,8 @@
 import clsx from "clsx";
 import { NavLink, Outlet } from "react-router-dom";
 
+import { ToastContainer } from "@/features/repos/notifications";
+
 const navigationItems = [
   { to: "/", label: "Dashboard", end: true },
   { to: "/settings/repos", label: "Tracked repos" },
@@ -47,6 +49,7 @@ export function AppShell() {
         <main className="flex-1">
           <Outlet />
         </main>
+        <ToastContainer />
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ description = "Backend and docs for Project Manager, a GitHub repository status 
 authors = [{ name = "Connor Kitchings", email = "connor.kitchings@gmail.com" }]
 requires-python = ">=3.10"
 dependencies = [
+    "apscheduler~=3.10",
     "Flask>=3.1.0",
     "PyYAML>=6.0.2",
     "requests>=2.31.0",

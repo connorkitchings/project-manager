@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { formatTimestamp, shortTypeLabel } from "@/lib/format";
 import type { GitHubEvent, RepoStatus, RepoSummary, RootResponse } from "@/lib/api/types";
 
-type DashboardFilter = "all" | "attention" | "errors" | "missing";
+type DashboardFilter = "all" | "attention" | "errors" | "missing" | "stale";
 
 interface FilterButtonProps {
   active: boolean;
@@ -166,6 +166,14 @@ export function PageBanner({
               ? `${meta.latest_sync_run.synced_count} synced / ${meta.latest_sync_run.failed_count} failed`
               : "No completed sync yet"}
           </div>
+          {meta?.scheduler?.running ? (
+            <div className="mt-2 text-xs text-pine">
+              Auto-sync every {meta.scheduler.sync_interval_minutes}m
+              {meta.scheduler.next_sync_at
+                ? ` — next at ${formatTimestamp(meta.scheduler.next_sync_at)}`
+                : ""}
+            </div>
+          ) : null}
         </div>
         <button
           className="rounded-full bg-accent px-4 py-3 font-medium text-white transition hover:translate-y-[-1px] hover:bg-[color:color-mix(in_srgb,var(--color-accent)_85%,black)] disabled:cursor-not-allowed disabled:opacity-60"
@@ -239,6 +247,11 @@ export function RepoCard({ repo }: RepoCardProps) {
           Missing: {repo.missing_sources.join(", ")}
         </div>
       ) : null}
+      {repo.is_data_stale ? (
+        <div className="rounded-2xl border border-attention/20 bg-attention/10 px-4 py-3 text-sm text-ink/80">
+          Snapshot data is stale — last synced {formatTimestamp(repo.last_synced_at)}
+        </div>
+      ) : null}
       {primaryAttentionReason &&
       !repo.sync_error &&
       !(repo.missing_sources.length && primaryAttentionReason.startsWith("Missing docs:")) ? (
@@ -294,6 +307,7 @@ export const dashboardFilters: Array<{
 }> = [
   { value: "all", label: "All repos" },
   { value: "attention", label: "Needs attention" },
+  { value: "stale", label: "Stale data" },
   { value: "errors", label: "Sync errors" },
   { value: "missing", label: "Missing docs" },
 ];

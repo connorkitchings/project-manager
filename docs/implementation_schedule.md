@@ -70,18 +70,18 @@ See `docs/v2_roadmap.md` for full feature descriptions and prioritization ration
 | 7.1 | Delete / Archive tracked repos | AI Assistant | `DELETE /api/tracked-repos/<id>` + UI | ✅ Done | Hard delete with confirmation UI (commit a5a3df4) |
 | 7.2 | Richer status field contract | Connor + AI Assistant | `RepoStatus` enum, tightened schema | ✅ Done | RepoStatus(str, Enum) in models.py; computed in normalizer; persisted in SQLite; typed in frontend |
 | 7.3 | Timeline view | AI Assistant | Merged event timeline on repo detail page | ✅ Done | Type filter buttons (All/Commits/PRs/Issues) on GitHub Activity section; frontend-only |
-| 7.4 | Stale / attention alerts | AI Assistant | Background sync + alert surface | ☐ Not Started | Requires scheduling; defer until status model is solid |
+| 7.4 | Stale / attention alerts | AI Assistant | Background sync + alert surface | ✅ Done | APScheduler-based background sync; data staleness detection; toast notifications; stale data filter |
 | 7.5 | GitHub repository discovery | AI Assistant | Search + one-click add UI | ☐ Not Started | GitHub search API integration |
 | 7.6 | Generated summary artifacts | AI Assistant | LLM-based summaries via Claude API | ☐ Not Started | Highest complexity; defer until parsing ceiling is hit |
 
 ## Immediate Next Steps
 
-1. Start Phase 7.1 (delete/archive) — small effort, completes the tracked repo lifecycle.
-2. Discuss the `RepoStatus` enum contract before committing to Phase 7.2 changes.
-3. Keep expanding parser coverage as new real repo patterns appear.
+1. Start Phase 7.5 (GitHub discovery) — search + one-click add UI.
+2. Keep expanding parser coverage as new real repo patterns appear.
+3. Consider local Docker deployment to keep the scheduler running persistently.
 
 ## Open Questions
 
-- Should delete be soft (archive) or hard (purge)? See `docs/v2_roadmap.md`.
-- What is the right status taxonomy? Healthy / Active / Stalled / Blocked / Unknown is the current candidate.
-- Should background sync run on a schedule, or is manual-only sufficient for v1 usage patterns?
+- Should background sync schedule be configurable at runtime via the API?
+- Is manual-only sync sufficient for v1, or should the scheduler run by default?
+- What is the right `stale_data_threshold_hours` default for the typical usage pattern?

@@ -26,10 +26,13 @@ export const queryKeys = {
   repo: (repoId: string) => ["repo", repoId] as const,
 };
 
+const SCHEDULER_POLL_INTERVAL_MS = 60_000;
+
 export function useMeta() {
   return useQuery({
     queryKey: queryKeys.meta,
     queryFn: fetchMeta,
+    refetchInterval: SCHEDULER_POLL_INTERVAL_MS,
   });
 }
 
@@ -37,6 +40,7 @@ export function useRepos() {
   return useQuery({
     queryKey: queryKeys.repos,
     queryFn: fetchRepos,
+    refetchInterval: SCHEDULER_POLL_INTERVAL_MS,
   });
 }
 

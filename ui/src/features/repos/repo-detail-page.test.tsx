@@ -19,6 +19,7 @@ const MOCK_REPO = {
   last_synced_at: "2026-04-21T12:01:00+00:00",
   sync_error: null,
   status: "active",
+  is_data_stale: false,
   notes: "Primary tracked repo",
   recent_updates: ["Added the React dashboard shell"],
   blockers: ["Need final visual polish"],

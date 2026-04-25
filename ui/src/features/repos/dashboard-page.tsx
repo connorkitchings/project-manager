@@ -44,6 +44,9 @@ export function DashboardPage() {
       if (filter === "missing") {
         return repo.missing_sources.length > 0;
       }
+      if (filter === "stale") {
+        return repo.is_data_stale;
+      }
       return true;
     });
   }, [deferredSearch, filter, reposQuery.data]);

@@ -206,3 +206,100 @@ def test_sync_all_skips_disabled_repos(
     assert result.synced_count == 1
     assert service.snapshot_store.get_snapshot("disabled-repo") is None
     assert ("connorkitchings", "disabled-repo") not in github_client.repository_calls
+
+
+def test_get_repo_detail_marks_fresh_data_as_not_stale(
+    tracked_repo,
+    sample_docs,
+    sample_activity,
+    tmp_path,
+):
+    service = RepoSyncService(
+        registry=FakeRegistry(tracked_repo),
+        github_client=FakeGitHubClient(sample_activity),
+        docs_reader=FakeDocsReader(sample_docs),
+        normalizer=RepoStatusNormalizer(Settings()),
+        snapshot_store=make_store(tmp_path),
+        stale_data_threshold_hours=48,
+    )
+    service.sync_all()
+
+    detail = service.get_repo_detail("project-manager")
+
+    assert detail.is_data_stale is False
+
+
+def test_get_repo_detail_marks_old_data_as_stale(
+    tracked_repo,
+    sample_docs,
+    sample_activity,
+    tmp_path,
+):
+    from datetime import datetime, timezone
+
+    from project_manager.models import RepoDetail
+
+    store = make_store(tmp_path)
+    service = RepoSyncService(
+        registry=FakeRegistry(tracked_repo),
+        github_client=FakeGitHubClient(sample_activity),
+        docs_reader=FakeDocsReader(sample_docs),
+        normalizer=RepoStatusNormalizer(Settings()),
+        snapshot_store=store,
+        stale_data_threshold_hours=1,
+    )
+    service.sync_all()
+
+    old_snapshot = RepoDetail(
+        id="project-manager",
+        name="Project Manager",
+        full_name="connorkitchings/project-manager",
+        last_synced_at=datetime(2020, 1, 1, tzinfo=timezone.utc),
+    )
+    store.upsert_snapshot(old_snapshot)
+
+    detail = service.get_repo_detail("project-manager")
+
+    assert detail.is_data_stale is True
+
+
+def test_get_repo_detail_marks_unsynced_as_stale(tracked_repo, tmp_path):
+    store = make_store(tmp_path)
+    store.bootstrap_tracked_repos([tracked_repo])
+    empty_activity = type(
+        "A",
+        (),
+        {
+            "flattened": lambda self: [],
+            "last_activity_at": None,
+            "commits": [],
+            "pull_requests": [],
+            "issues": [],
+        },
+    )()
+    empty_docs = type(
+        "D",
+        (),
+        {
+            "readme": None,
+            "project_charter": None,
+            "implementation_schedule": None,
+            "latest_session_log": None,
+            "documentation_sources": [],
+            "missing_sources": [],
+        },
+    )()
+    service = RepoSyncService(
+        registry=FakeRegistry(tracked_repo),
+        github_client=FakeGitHubClient(empty_activity),
+        docs_reader=FakeDocsReader(empty_docs),
+        normalizer=RepoStatusNormalizer(Settings()),
+        snapshot_store=store,
+        stale_data_threshold_hours=48,
+    )
+
+    detail = service.get_repo_detail("project-manager")
+
+    assert detail.is_data_stale is False
+    assert detail.attention_flag is True
+    assert "Not synced yet." in detail.attention_reasons

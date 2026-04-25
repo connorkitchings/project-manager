@@ -4,7 +4,11 @@ from pathlib import Path
 
 from flask import Flask, abort, jsonify, request, send_from_directory
 
-from project_manager.api.dependencies import get_app_settings, get_sync_service
+from project_manager.api.dependencies import (
+    get_app_settings,
+    get_sync_scheduler,
+    get_sync_service,
+)
 from project_manager.services.github import GitHubAPIError
 from project_manager.services.storage import (
     TrackedRepoExistsError,
@@ -13,11 +17,16 @@ from project_manager.services.storage import (
 from project_manager.services.sync import InvalidTrackedRepoError
 
 
-def create_app(sync_service=None, frontend_dir: Path | None = None) -> Flask:
+def create_app(
+    sync_service=None,
+    scheduler=None,
+    frontend_dir: Path | None = None,
+) -> Flask:
     """Create the Project Manager Flask application."""
     app = Flask(__name__, static_folder=None)
     settings = get_app_settings()
     service = sync_service or get_sync_service()
+    active_scheduler = scheduler or get_sync_scheduler()
     resolved_frontend_dir = frontend_dir or settings.frontend_dist_path
     index_file = resolved_frontend_dir / "index.html"
 
@@ -30,6 +39,7 @@ def create_app(sync_service=None, frontend_dir: Path | None = None) -> Flask:
     @app.get("/api/meta")
     def api_meta():
         latest_sync_run = service.snapshot_store.get_latest_sync_run()
+        scheduler_status = active_scheduler.get_status()
         return jsonify(
             {
                 "name": settings.project_name,
@@ -38,6 +48,7 @@ def create_app(sync_service=None, frontend_dir: Path | None = None) -> Flask:
                 "database_file": str(settings.database_path),
                 "tracked_repos_file": str(settings.tracked_repos_path),
                 "latest_sync_run": latest_sync_run,
+                "scheduler": scheduler_status,
             }
         )
 
@@ -163,6 +174,8 @@ def create_app(sync_service=None, frontend_dir: Path | None = None) -> Flask:
             if asset_path.is_file():
                 return send_from_directory(resolved_frontend_dir, path)
         return send_from_directory(resolved_frontend_dir, "index.html")
+
+    active_scheduler.start()
 
     return app
 

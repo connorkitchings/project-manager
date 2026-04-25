@@ -153,6 +153,19 @@ components:
           allOf:
             - $ref: "#/components/schemas/SyncRun"
           nullable: true
+        scheduler:
+          $ref: "#/components/schemas/SchedulerStatus"
+    SchedulerStatus:
+      type: object
+      properties:
+        running:
+          type: boolean
+        sync_interval_minutes:
+          type: integer
+        next_sync_at:
+          type: string
+          format: date-time
+          nullable: true
     TrackedRepo:
       type: object
       properties:
@@ -247,6 +260,8 @@ components:
           nullable: true
         status:
           $ref: "#/components/schemas/RepoStatus"
+        is_data_stale:
+          type: boolean
     RepoDetail:
       allOf:
         - $ref: "#/components/schemas/RepoSummary"

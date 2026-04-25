@@ -244,3 +244,66 @@ def test_bootstrap_preserves_runtime_managed_fields(tmp_path):
     assert repo.name == "Custom runtime name"
     assert repo.enabled is False
     assert repo.notes == "Runtime override"
+
+
+def test_get_stale_repo_ids_returns_unsynced_repos(tmp_path):
+    database_path = tmp_path / "project_manager.db"
+    store = SQLiteAppStateStore(database_path)
+    store.create_tracked_repo(TrackedRepo(id="repo-a", owner="user", repo="repo-a"))
+    store.create_tracked_repo(TrackedRepo(id="repo-b", owner="user", repo="repo-b"))
+
+    stale_ids = store.get_stale_repo_ids(threshold_days=1)
+
+    assert "repo-a" in stale_ids
+    assert "repo-b" in stale_ids
+
+
+def test_get_stale_repo_ids_excludes_fresh_repos(tmp_path):
+    database_path = tmp_path / "project_manager.db"
+    store = SQLiteAppStateStore(database_path)
+    store.create_tracked_repo(
+        TrackedRepo(id="fresh-repo", owner="user", repo="fresh-repo")
+    )
+    store.upsert_snapshot(
+        RepoDetail(
+            id="fresh-repo",
+            name="Fresh",
+            full_name="user/fresh-repo",
+            last_synced_at=datetime.now(timezone.utc),
+        )
+    )
+
+    stale_ids = store.get_stale_repo_ids(threshold_days=1)
+
+    assert "fresh-repo" not in stale_ids
+
+
+def test_get_stale_repo_ids_excludes_disabled_repos(tmp_path):
+    database_path = tmp_path / "project_manager.db"
+    store = SQLiteAppStateStore(database_path)
+    store.create_tracked_repo(
+        TrackedRepo(id="disabled", owner="user", repo="disabled", enabled=False)
+    )
+
+    stale_ids = store.get_stale_repo_ids(threshold_days=1)
+
+    assert "disabled" not in stale_ids
+
+
+def test_get_stale_repo_ids_includes_old_snapshots(tmp_path):
+    database_path = tmp_path / "project_manager.db"
+    store = SQLiteAppStateStore(database_path)
+    store.create_tracked_repo(TrackedRepo(id="old-repo", owner="user", repo="old-repo"))
+    old_time = datetime(2020, 1, 1, tzinfo=timezone.utc)
+    store.upsert_snapshot(
+        RepoDetail(
+            id="old-repo",
+            name="Old",
+            full_name="user/old-repo",
+            last_synced_at=old_time,
+        )
+    )
+
+    stale_ids = store.get_stale_repo_ids(threshold_days=1)
+
+    assert "old-repo" in stale_ids

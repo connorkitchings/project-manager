@@ -12,6 +12,23 @@ from project_manager.services.storage import (
 )
 
 
+class FakeScheduler:
+    """Minimal scheduler stub for API route tests."""
+
+    def start(self):
+        pass
+
+    def shutdown(self):
+        pass
+
+    def get_status(self):
+        return {
+            "running": False,
+            "sync_interval_minutes": 360,
+            "next_sync_at": None,
+        }
+
+
 class FakeSnapshotStore:
     """Minimal persistence stub for API route tests."""
 
@@ -69,6 +86,7 @@ class FakeSyncService:
     def get_repo_detail(self, repo_id: str):
         if repo_id != "project-manager":
             raise TrackedRepoNotFoundError("Tracked repo not found: missing")
+        self.detail.is_data_stale = False
         return self.detail
 
     def create_tracked_repo(
@@ -136,6 +154,7 @@ def make_frontend_dist(tmp_path: Path) -> Path:
 def test_meta_endpoint(tmp_path):
     app = create_app(
         sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()
@@ -145,11 +164,14 @@ def test_meta_endpoint(tmp_path):
     payload = response.get_json()
     assert payload["name"] == "Project Manager"
     assert payload["persistence"] == "sqlite"
+    assert payload["scheduler"]["running"] is False
+    assert payload["scheduler"]["sync_interval_minutes"] == 360
 
 
 def test_repo_endpoints(tmp_path):
     app = create_app(
         sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()
@@ -173,6 +195,7 @@ def test_repo_endpoints(tmp_path):
 def test_tracked_repo_management_endpoints(tmp_path):
     app = create_app(
         sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()
@@ -206,6 +229,7 @@ def test_tracked_repo_management_endpoints(tmp_path):
 def test_delete_tracked_repo_endpoint(tmp_path):
     app = create_app(
         sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()
@@ -222,6 +246,7 @@ def test_delete_tracked_repo_endpoint(tmp_path):
 def test_frontend_routes_serve_spa(tmp_path):
     app = create_app(
         sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()
@@ -242,6 +267,7 @@ def test_frontend_routes_serve_spa(tmp_path):
 def test_create_tracked_repo_invalid_id_type_returns_400(tmp_path):
     app = create_app(
         sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()
@@ -257,6 +283,7 @@ def test_create_tracked_repo_invalid_id_type_returns_400(tmp_path):
 def test_create_tracked_repo_invalid_enabled_type_returns_400(tmp_path):
     app = create_app(
         sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()
@@ -271,6 +298,7 @@ def test_create_tracked_repo_invalid_enabled_type_returns_400(tmp_path):
 def test_create_tracked_repo_non_json_body_returns_400(tmp_path):
     app = create_app(
         sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()
@@ -290,6 +318,7 @@ def test_create_tracked_repo_conflict_returns_409(tmp_path):
 
     app = create_app(
         sync_service=ConflictSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()
@@ -308,6 +337,7 @@ def test_create_tracked_repo_github_error_returns_502(tmp_path):
 
     app = create_app(
         sync_service=GithubErrorSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()
@@ -326,6 +356,7 @@ def test_update_tracked_repo_not_found_returns_404(tmp_path):
 
     app = create_app(
         sync_service=NotFoundSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()
@@ -337,6 +368,7 @@ def test_update_tracked_repo_not_found_returns_404(tmp_path):
 def test_update_tracked_repo_bad_enabled_type_returns_400(tmp_path):
     app = create_app(
         sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
         frontend_dir=make_frontend_dist(tmp_path),
     )
     client = app.test_client()

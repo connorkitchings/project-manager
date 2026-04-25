@@ -115,15 +115,18 @@ def test_repo_summary_to_dict_includes_status():
         full_name="o/x",
         status=RepoStatus.blocked,
         last_synced_at=now,
+        is_data_stale=True,
     )
     d = summary.to_dict()
     assert d["status"] == "blocked"
     assert d["last_synced_at"] == now.isoformat()
+    assert d["is_data_stale"] is True
 
 
 def test_repo_summary_to_dict_default_status():
     summary = RepoSummary(id="x", name="X", full_name="o/x")
     assert summary.to_dict()["status"] == "unknown"
+    assert summary.to_dict()["is_data_stale"] is False
 
 
 # ---------------------------------------------------------------------------
@@ -138,11 +141,13 @@ def test_repo_detail_to_summary_propagates_status():
         full_name="o/x",
         status=RepoStatus.stalled,
         attention_reasons=["No recent activity"],
+        is_data_stale=True,
     )
     summary = detail.to_summary()
     assert isinstance(summary, RepoSummary)
     assert summary.status == RepoStatus.stalled
     assert summary.attention_reasons == ["No recent activity"]
+    assert summary.is_data_stale is True
 
 
 def test_repo_detail_to_dict_includes_github_activity():

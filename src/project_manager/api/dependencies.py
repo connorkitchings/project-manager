@@ -7,6 +7,7 @@ from project_manager.services.docs import RepositoryDocsReader
 from project_manager.services.github import GitHubClient
 from project_manager.services.normalizer import RepoStatusNormalizer
 from project_manager.services.registry import RegistryService
+from project_manager.services.scheduler import SyncScheduler
 from project_manager.services.storage import SQLiteAppStateStore
 from project_manager.services.sync import RepoSyncService
 
@@ -40,12 +41,24 @@ def get_snapshot_store() -> SQLiteAppStateStore:
 
 @lru_cache
 def get_sync_service() -> RepoSyncService:
+    settings = get_settings()
     return RepoSyncService(
         registry=get_registry_service(),
         github_client=get_github_client(),
         docs_reader=get_docs_reader(),
         normalizer=get_normalizer(),
         snapshot_store=get_snapshot_store(),
+        stale_data_threshold_hours=settings.stale_data_threshold_hours,
+    )
+
+
+@lru_cache
+def get_sync_scheduler() -> SyncScheduler:
+    settings = get_settings()
+    return SyncScheduler(
+        sync_service=get_sync_service(),
+        interval_minutes=settings.sync_interval_minutes,
+        enabled=settings.scheduler_enabled,
     )
 
 

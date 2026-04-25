@@ -13,6 +13,12 @@ export interface SyncRun {
   failed_count: number;
 }
 
+export interface SchedulerStatus {
+  running: boolean;
+  sync_interval_minutes: number;
+  next_sync_at: string | null;
+}
+
 export interface RootResponse {
   name: string;
   status: string;
@@ -20,6 +26,7 @@ export interface RootResponse {
   database_file: string;
   tracked_repos_file: string;
   latest_sync_run: SyncRun | null;
+  scheduler: SchedulerStatus;
 }
 
 export interface RepoSummary {
@@ -36,6 +43,7 @@ export interface RepoSummary {
   last_synced_at: string | null;
   sync_error: string | null;
   status: RepoStatus;
+  is_data_stale: boolean;
 }
 
 export interface GitHubEvent {

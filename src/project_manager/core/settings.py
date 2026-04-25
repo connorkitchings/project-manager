@@ -30,6 +30,9 @@ class Settings:
     frontend_dist_dir: str = "ui/dist"
     recent_activity_limit: int = 5
     stale_after_days: int = 30
+    sync_interval_minutes: int = 360
+    scheduler_enabled: bool = True
+    stale_data_threshold_hours: int = 48
 
     @property
     def database_path(self) -> Path:
@@ -79,6 +82,16 @@ class Settings:
             ),
             stale_after_days=max(
                 1, _get_int_env("PROJECT_MANAGER_STALE_AFTER_DAYS", 30)
+            ),
+            sync_interval_minutes=max(
+                5, _get_int_env("PROJECT_MANAGER_SYNC_INTERVAL_MINUTES", 360)
+            ),
+            scheduler_enabled=os.getenv(
+                "PROJECT_MANAGER_SCHEDULER_ENABLED", "true"
+            ).lower()
+            in ("true", "1", "yes"),
+            stale_data_threshold_hours=max(
+                1, _get_int_env("PROJECT_MANAGER_STALE_DATA_THRESHOLD_HOURS", 48)
             ),
         )
 

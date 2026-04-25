@@ -136,6 +136,7 @@ class RepoSummary:
     last_synced_at: datetime | None = None
     sync_error: str | None = None
     status: RepoStatus = RepoStatus.unknown
+    is_data_stale: bool = False
 
     def to_dict(self) -> dict:
         return {
@@ -152,6 +153,7 @@ class RepoSummary:
             "last_synced_at": _serialize_datetime(self.last_synced_at),
             "sync_error": self.sync_error,
             "status": self.status.value,
+            "is_data_stale": self.is_data_stale,
         }
 
 
@@ -181,6 +183,7 @@ class RepoDetail(RepoSummary):
             last_synced_at=self.last_synced_at,
             sync_error=self.sync_error,
             status=self.status,
+            is_data_stale=self.is_data_stale,
         )
 
     def to_dict(self) -> dict:

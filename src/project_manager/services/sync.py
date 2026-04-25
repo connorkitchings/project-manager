@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from project_manager.models import (
     RepoDetail,
@@ -39,12 +39,14 @@ class RepoSyncService:
         docs_reader: RepositoryDocsReader,
         normalizer: RepoStatusNormalizer,
         snapshot_store: SQLiteAppStateStore,
+        stale_data_threshold_hours: int = 48,
     ) -> None:
         self.registry = registry
         self.github_client = github_client
         self.docs_reader = docs_reader
         self.normalizer = normalizer
         self.snapshot_store = snapshot_store
+        self._stale_data_threshold = timedelta(hours=stale_data_threshold_hours)
         self._bootstrap_tracked_repos()
 
     def _bootstrap_tracked_repos(self) -> None:
@@ -68,9 +70,16 @@ class RepoSyncService:
         """Get detailed status for a tracked repo."""
         repo = self.snapshot_store.get_tracked_repo(repo_id)
         snapshot = self.snapshot_store.get_snapshot(repo_id)
-        if snapshot is not None:
-            return snapshot
-        return self.normalizer.build_unsynced_snapshot(repo)
+        if snapshot is None:
+            return self.normalizer.build_unsynced_snapshot(repo)
+        snapshot.is_data_stale = self._is_snapshot_data_stale(snapshot)
+        return snapshot
+
+    def _is_snapshot_data_stale(self, snapshot: RepoDetail) -> bool:
+        if snapshot.last_synced_at is None:
+            return True
+        cutoff = datetime.now(timezone.utc) - self._stale_data_threshold
+        return snapshot.last_synced_at < cutoff
 
     def create_tracked_repo(
         self,

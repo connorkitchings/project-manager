@@ -25,6 +25,11 @@ describe("DashboardPage", () => {
                 synced_count: 2,
                 failed_count: 0,
               },
+              scheduler: {
+                running: false,
+                sync_interval_minutes: 360,
+                next_sync_at: null,
+              },
             }),
           ),
         );
@@ -48,6 +53,8 @@ describe("DashboardPage", () => {
                   missing_sources: [],
                   last_synced_at: "2026-04-21T12:01:00+00:00",
                   sync_error: null,
+                  status: "healthy",
+                  is_data_stale: false,
                 },
                 {
                   id: "legacy-repo",
@@ -62,6 +69,8 @@ describe("DashboardPage", () => {
                   missing_sources: ["docs/project_charter.md"],
                   last_synced_at: null,
                   sync_error: "GitHub token missing",
+                  status: "error",
+                  is_data_stale: false,
                 },
               ],
             }),

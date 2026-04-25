@@ -5,13 +5,14 @@ from __future__ import annotations
 import json
 import sqlite3
 from contextlib import contextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from threading import Lock
 
 from project_manager.models import GitHubEvent, RepoDetail, RepoStatus, TrackedRepo
 
 _UNSET = object()
+_SECONDS_PER_DAY = timedelta(days=1)
 
 
 class TrackedRepoExistsError(RuntimeError):
@@ -401,6 +402,23 @@ class SQLiteAppStateStore:
             "synced_count": row["synced_count"],
             "failed_count": row["failed_count"],
         }
+
+    def get_stale_repo_ids(self, threshold_days: int) -> list[str]:
+        """Return repo ids whose snapshot data is older than the threshold."""
+        cutoff = datetime.now(timezone.utc) - _SECONDS_PER_DAY * threshold_days
+        with self._connection() as connection:
+            rows = connection.execute(
+                """
+                SELECT tr.id
+                FROM tracked_repos tr
+                LEFT JOIN repo_snapshots rs ON tr.id = rs.repo_id
+                WHERE tr.enabled = 1
+                  AND (rs.last_synced_at IS NULL OR rs.last_synced_at < ?)
+                ORDER BY tr.id
+                """,
+                (cutoff.isoformat(),),
+            ).fetchall()
+        return [row["id"] for row in rows]
 
     @staticmethod
     def _row_to_tracked_repo(row: sqlite3.Row) -> TrackedRepo:
