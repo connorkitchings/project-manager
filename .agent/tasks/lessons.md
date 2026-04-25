@@ -16,19 +16,35 @@
 
 > Lessons from user corrections. Each entry captures the mistake, the rule to prevent it, and the date.
 
-### [Date: YYYY-MM-DD]
+### [Date: 2026-04-25]
 
 **Mistake:**
-> What went wrong (from user correction)
+> `super()` in `RepoDetail.to_dict()` failed on Python 3.11 CI with `TypeError: super(type, obj): obj must be an instance or subtype of type`. Worked locally on Python 3.14.
 
 **Root Cause:**
-> Why it happened
+> `@dataclass(slots=True)` doesn't create the `__class__` implicit closure cell on Python 3.11, so `super()` has no reference to the class.
 
 **Rule Added:**
-> Specific rule to prevent this mistake
+> Never use bare `super()` in `@dataclass(slots=True)` subclasses. Use explicit `ParentClass.method(self)` instead.
 
 **Example:**
-> What you should have done instead
+> Replace `super().to_dict()` with `RepoSummary.to_dict(self)`.
+
+---
+
+### [Date: 2026-04-25]
+
+**Mistake:**
+> Pushed code without checking that CI workflows would pass. Three rounds of CI fixes were needed.
+
+**Root Cause:**
+> Didn't check CI workflow files before pushing. The workflows had pre-existing issues (missing tsconfig paths, wrong `--extra` flags, missing permissions) that only surfaced in CI.
+
+**Rule Added:**
+> Before pushing, review CI workflow files and run equivalent checks locally: `tsc --noEmit` from `ui/`, `uv sync --extra docs`, `uv sync --extra security`.
+
+**Example:**
+> Run `npx tsc --noEmit` from `ui/` directory before pushing frontend changes. Check that all `--extra` and `--group` flags in CI match `pyproject.toml` structure.
 
 ---
 
