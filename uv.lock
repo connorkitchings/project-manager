@@ -874,6 +874,10 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+docs = [
+    { name = "mkdocs" },
+    { name = "mkdocs-material" },
+]
 scripts = [
     { name = "pyperclip" },
     { name = "rich" },
@@ -902,6 +906,8 @@ requires-dist = [
     { name = "bandit", marker = "extra == 'security'", specifier = ">=1.7.9" },
     { name = "flask", specifier = ">=3.1.0" },
     { name = "gunicorn", specifier = ">=23.0.0" },
+    { name = "mkdocs", marker = "extra == 'docs'", specifier = ">=1.6.1" },
+    { name = "mkdocs-material", marker = "extra == 'docs'", specifier = ">=9.6.11" },
     { name = "pyperclip", marker = "extra == 'scripts'", specifier = ">=1.8.2" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.31.0" },
@@ -909,7 +915,7 @@ requires-dist = [
     { name = "safety", marker = "extra == 'security'", specifier = ">=2.3.5" },
     { name = "typer", marker = "extra == 'scripts'", specifier = ">=0.9.0" },
 ]
-provides-extras = ["scripts", "security"]
+provides-extras = ["docs", "scripts", "security"]
 
 [package.metadata.requires-dev]
 dev = [

@@ -213,7 +213,7 @@ class RepoDetail(RepoSummary):
         )
 
     def to_dict(self) -> dict:
-        data = super().to_dict()
+        data = RepoSummary.to_dict(self)
         data.update(
             {
                 "notes": self.notes,

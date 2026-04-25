@@ -13,6 +13,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+docs = [
+    "mkdocs-material>=9.6.11",
+    "mkdocs>=1.6.1",
+]
 scripts = [
     "typer>=0.9.0",
     "rich>=13.0.0",
