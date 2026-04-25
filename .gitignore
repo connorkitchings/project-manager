@@ -89,3 +89,4 @@ docs/_build/
 
 # MkDocs
 site/
+bandit-report.json
