@@ -1,13 +1,15 @@
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
 
 import {
   useCreateTrackedRepo,
   useDeleteTrackedRepo,
+  useGitHubSearch,
   useTrackedRepos,
   useUpdateTrackedRepo,
+  useUserRepos,
 } from "@/features/repos/hooks";
 import { EmptyState, SectionCard } from "@/features/repos/ui";
-import type { TrackedRepo } from "@/lib/api/types";
+import type { GitHubSearchResult, TrackedRepo } from "@/lib/api/types";
 
 function buildRecommendedId(owner: string, repo: string) {
   return `${owner}-${repo}`
@@ -146,6 +148,168 @@ function TrackedRepoRow({ repo }: TrackedRepoRowProps) {
   );
 }
 
+type DiscoveryTab = "search" | "username";
+
+function useDebouncedValue<T>(value: T, delayMs: number): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delayMs);
+    return () => clearTimeout(timer);
+  }, [value, delayMs]);
+  return debounced;
+}
+
+interface RepoDiscoverySectionProps {
+  trackedRepos: TrackedRepo[];
+}
+
+function RepoDiscoverySection({ trackedRepos }: RepoDiscoverySectionProps) {
+  const createMutation = useCreateTrackedRepo();
+  const [tab, setTab] = useState<DiscoveryTab>("search");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [usernameInput, setUsernameInput] = useState("");
+  const debouncedQuery = useDebouncedValue(searchQuery, 400);
+  const debouncedUsername = useDebouncedValue(usernameInput, 400);
+
+  const searchResults = useGitHubSearch(debouncedQuery);
+  const userRepos = useUserRepos(tab === "username" ? debouncedUsername : "");
+
+  const trackedFullNames = useMemo(
+    () => new Set(trackedRepos.map((r) => r.full_name.toLowerCase())),
+    [trackedRepos],
+  );
+
+  const activeResults = tab === "search" ? searchResults.data : userRepos.data;
+  const isLoading = tab === "search" ? searchResults.isLoading : userRepos.isLoading;
+  const error = tab === "search" ? searchResults.error : userRepos.error;
+
+  function handleAdd(result: GitHubSearchResult) {
+    createMutation.mutate({
+      id: buildRecommendedId(result.owner, result.repo),
+      owner: result.owner,
+      repo: result.repo,
+      enabled: true,
+    });
+  }
+
+  return (
+    <SectionCard
+      subtitle="Search GitHub or list your public repos, then add them to the dashboard with one click."
+      title="Discover repositories"
+    >
+      <div className="flex gap-2">
+        <button
+          className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+            tab === "search"
+              ? "bg-pine/15 text-pine"
+              : "border border-ink/10 text-ink/60 hover:border-pine/25 hover:text-pine"
+          }`}
+          onClick={() => setTab("search")}
+          type="button"
+        >
+          Search
+        </button>
+        <button
+          className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+            tab === "username"
+              ? "bg-pine/15 text-pine"
+              : "border border-ink/10 text-ink/60 hover:border-pine/25 hover:text-pine"
+          }`}
+          onClick={() => setTab("username")}
+          type="button"
+        >
+          My repos
+        </button>
+      </div>
+
+      <div className="mt-4">
+        {tab === "search" ? (
+          <input
+            className="w-full rounded-2xl border border-ink/10 bg-base/80 px-4 py-3 text-sm text-ink outline-none transition focus:border-pine/35"
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search repositories (e.g. flask dashboard)…"
+            type="text"
+            value={searchQuery}
+          />
+        ) : (
+          <input
+            className="w-full rounded-2xl border border-ink/10 bg-base/80 px-4 py-3 text-sm text-ink outline-none transition focus:border-pine/35"
+            onChange={(e) => setUsernameInput(e.target.value)}
+            placeholder="GitHub username (e.g. connorkitchings)…"
+            type="text"
+            value={usernameInput}
+          />
+        )}
+      </div>
+
+      {isLoading ? (
+        <EmptyState body="Searching GitHub…" title="Loading" />
+      ) : error ? (
+        <EmptyState body={error.message} title="Search failed" />
+      ) : !activeResults ? (
+        <EmptyState
+          body={tab === "search" ? "Type at least 2 characters to search." : "Enter a GitHub username to list repos."}
+          title={tab === "search" ? "Search GitHub" : "List your repos"}
+        />
+      ) : activeResults.length === 0 ? (
+        <EmptyState body="No repositories found." title="No results" />
+      ) : (
+        <ul className="mt-4 space-y-3">
+          {activeResults.map((result) => {
+            const isTracked = trackedFullNames.has(result.full_name.toLowerCase());
+            return (
+              <li
+                key={result.full_name}
+                className="flex flex-col gap-2 rounded-2xl border border-ink/10 bg-base/70 p-4 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0 space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <a
+                      className="text-sm font-semibold text-ink transition hover:text-pine"
+                      href={result.html_url}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {result.full_name}
+                    </a>
+                    {result.language ? (
+                      <span className="rounded-full bg-ink/8 px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-ink/50">
+                        {result.language}
+                      </span>
+                    ) : null}
+                    {result.stargazers_count > 0 ? (
+                      <span className="text-xs text-ink/40">
+                        ★ {result.stargazers_count}
+                      </span>
+                    ) : null}
+                  </div>
+                  {result.description ? (
+                    <p className="truncate text-sm text-ink/60">{result.description}</p>
+                  ) : null}
+                </div>
+                <div className="shrink-0">
+                  <button
+                    className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition hover:translate-y-[-1px] hover:bg-[color:color-mix(in_srgb,var(--color-accent)_85%,black)] disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={isTracked || createMutation.isPending}
+                    onClick={() => handleAdd(result)}
+                    type="button"
+                  >
+                    {isTracked ? "Already tracked" : "Add to dashboard"}
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {createMutation.error ? (
+        <p className="mt-3 text-sm text-danger">{createMutation.error.message}</p>
+      ) : null}
+    </SectionCard>
+  );
+}
+
 export function RepoSettingsPage() {
   const trackedReposQuery = useTrackedRepos();
   const createMutation = useCreateTrackedRepo();
@@ -185,9 +349,11 @@ export function RepoSettingsPage() {
 
   return (
     <div className="space-y-6">
+      <RepoDiscoverySection trackedRepos={trackedReposQuery.data ?? []} />
+
       <SectionCard
         subtitle="Add repos to SQLite-backed runtime state, then toggle whether they appear in the portfolio dashboard and sync flow."
-        title="Tracked repository management"
+        title="Manual add"
       >
         <form className="grid gap-4 lg:grid-cols-2" onSubmit={handleSubmit}>
           <label className="space-y-2">

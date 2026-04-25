@@ -33,6 +33,7 @@ class Settings:
     sync_interval_minutes: int = 360
     scheduler_enabled: bool = True
     stale_data_threshold_hours: int = 48
+    github_search_default_limit: int = 10
 
     @property
     def database_path(self) -> Path:
@@ -92,6 +93,13 @@ class Settings:
             in ("true", "1", "yes"),
             stale_data_threshold_hours=max(
                 1, _get_int_env("PROJECT_MANAGER_STALE_DATA_THRESHOLD_HOURS", 48)
+            ),
+            github_search_default_limit=max(
+                1,
+                min(
+                    _get_int_env("PROJECT_MANAGER_GITHUB_SEARCH_DEFAULT_LIMIT", 10),
+                    30,
+                ),
             ),
         )
 

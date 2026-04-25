@@ -2,9 +2,16 @@
 
 from datetime import datetime, timezone
 from pathlib import Path
+from unittest.mock import patch
 
 from project_manager.api.main import create_app
-from project_manager.models import RepoDetail, SyncResponse, SyncResult, TrackedRepo
+from project_manager.models import (
+    GitHubSearchResult,
+    RepoDetail,
+    SyncResponse,
+    SyncResult,
+    TrackedRepo,
+)
 from project_manager.services.github import GitHubAPIError
 from project_manager.services.storage import (
     TrackedRepoExistsError,
@@ -377,4 +384,107 @@ def test_update_tracked_repo_bad_enabled_type_returns_400(tmp_path):
         "/api/tracked-repos/project-manager",
         json={"enabled": "true"},
     )
+    assert response.status_code == 400
+
+
+# ---------------------------------------------------------------------------
+# GitHub search endpoints
+# ---------------------------------------------------------------------------
+
+
+def test_github_search_endpoint(tmp_path):
+    app = create_app(
+        sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+    mock_results = [
+        GitHubSearchResult(
+            full_name="connorkitchings/project-manager",
+            owner="connorkitchings",
+            repo="project-manager",
+            description="A dashboard",
+            html_url="https://github.com/connorkitchings/project-manager",
+            language="Python",
+            stargazers_count=5,
+            topics=["flask"],
+        )
+    ]
+    with patch("project_manager.api.main.get_github_client") as mock_get_client:
+        mock_client = mock_get_client.return_value
+        mock_client.search_repositories.return_value = mock_results
+        response = client.get("/api/github/search?q=project-manager")
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert len(payload["results"]) == 1
+    assert payload["results"][0]["full_name"] == "connorkitchings/project-manager"
+
+
+def test_github_search_missing_query_returns_400(tmp_path):
+    app = create_app(
+        sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+
+    response = client.get("/api/github/search")
+    assert response.status_code == 400
+    assert "detail" in response.get_json()
+
+
+def test_github_search_api_error_returns_502(tmp_path):
+    app = create_app(
+        sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+    with patch("project_manager.api.main.get_github_client") as mock_get_client:
+        mock_client = mock_get_client.return_value
+        mock_client.search_repositories.side_effect = GitHubAPIError(
+            "rate limit", status_code=403
+        )
+        response = client.get("/api/github/search?q=test")
+
+    assert response.status_code == 502
+
+
+def test_github_user_repos_endpoint(tmp_path):
+    app = create_app(
+        sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+    mock_results = [
+        GitHubSearchResult(
+            full_name="connorkitchings/project-manager",
+            owner="connorkitchings",
+            repo="project-manager",
+            description="A dashboard",
+            html_url="https://github.com/connorkitchings/project-manager",
+        )
+    ]
+    with patch("project_manager.api.main.get_github_client") as mock_get_client:
+        mock_client = mock_get_client.return_value
+        mock_client.list_user_repos.return_value = mock_results
+        response = client.get("/api/github/user-repos?username=connorkitchings")
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert len(payload["results"]) == 1
+
+
+def test_github_user_repos_missing_username_returns_400(tmp_path):
+    app = create_app(
+        sync_service=FakeSyncService(),
+        scheduler=FakeScheduler(),
+        frontend_dir=make_frontend_dist(tmp_path),
+    )
+    client = app.test_client()
+
+    response = client.get("/api/github/user-repos")
     assert response.status_code == 400

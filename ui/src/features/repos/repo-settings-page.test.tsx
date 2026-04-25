@@ -92,6 +92,14 @@ describe("RepoSettingsPage", () => {
           return new Response(null, { status: 204 });
         }
 
+        if (url.includes("/api/github/search")) {
+          return new Response(JSON.stringify({ results: [] }));
+        }
+
+        if (url.includes("/api/github/user-repos")) {
+          return new Response(JSON.stringify({ results: [] }));
+        }
+
         return Promise.reject(new Error(`Unhandled fetch for ${url}`));
       }) as typeof fetch,
     );
@@ -181,10 +189,10 @@ describe("RepoSettingsPage", () => {
 
     expect(await screen.findAllByRole("article")).toHaveLength(2);
     const formSection = screen
-      .getAllByRole("heading", { name: "Tracked repository management" })[0]
+      .getAllByRole("heading", { name: "Manual add" })[0]
       .closest("section");
     if (!formSection) {
-      throw new Error("Tracked repository management section not found");
+      throw new Error("Manual add section not found");
     }
     const form = within(formSection);
 

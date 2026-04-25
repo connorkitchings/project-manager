@@ -6,6 +6,7 @@ from flask import Flask, abort, jsonify, request, send_from_directory
 
 from project_manager.api.dependencies import (
     get_app_settings,
+    get_github_client,
     get_sync_scheduler,
     get_sync_service,
 )
@@ -139,6 +140,42 @@ def create_app(
         except TrackedRepoNotFoundError:
             return jsonify({"detail": f"Tracked repo not found: {repo_id}"}), 404
         return "", 204
+
+    @app.get("/api/github/search")
+    def github_search():
+        query = request.args.get("q", "").strip()
+        if not query:
+            return jsonify({"detail": "Query parameter 'q' is required."}), 400
+        try:
+            limit = int(
+                request.args.get("per_page", settings.github_search_default_limit)
+            )
+            limit = max(1, min(limit, 30))
+        except (ValueError, TypeError):
+            limit = settings.github_search_default_limit
+        try:
+            github = get_github_client()
+            results = github.search_repositories(query, limit=limit)
+        except GitHubAPIError as exc:
+            return jsonify({"detail": str(exc)}), 502
+        return jsonify({"results": [r.to_dict() for r in results]})
+
+    @app.get("/api/github/user-repos")
+    def github_user_repos():
+        username = request.args.get("username", "").strip()
+        if not username:
+            return jsonify({"detail": "Query parameter 'username' is required."}), 400
+        try:
+            limit = int(request.args.get("per_page", "30"))
+            limit = max(1, min(limit, 100))
+        except (ValueError, TypeError):
+            limit = 30
+        try:
+            github = get_github_client()
+            results = github.list_user_repos(username, limit=limit)
+        except GitHubAPIError as exc:
+            return jsonify({"detail": str(exc)}), 502
+        return jsonify({"results": [r.to_dict() for r in results]})
 
     @app.get("/api/repos/<repo_id>")
     def get_repo(repo_id: str):

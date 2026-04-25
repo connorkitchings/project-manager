@@ -105,3 +105,18 @@ export interface SyncResponse {
   results: SyncResult[];
   synced_count: number;
 }
+
+export interface GitHubSearchResult {
+  full_name: string;
+  owner: string;
+  repo: string;
+  description: string | null;
+  html_url: string;
+  language: string | null;
+  stargazers_count: number;
+  topics: string[];
+}
+
+export interface GitHubSearchResponse {
+  results: GitHubSearchResult[];
+}

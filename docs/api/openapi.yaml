@@ -134,6 +134,73 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SyncResponse"
+  /api/github/search:
+    get:
+      summary: Search GitHub repositories
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query string
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 30
+            default: 10
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/GitHubSearchResult"
+        "400":
+          description: Missing query parameter
+        "502":
+          description: GitHub API error
+  /api/github/user-repos:
+    get:
+      summary: List public repositories for a GitHub user
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 30
+      responses:
+        "200":
+          description: User repositories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/GitHubSearchResult"
+        "400":
+          description: Missing username parameter
+        "502":
+          description: GitHub API error
 components:
   schemas:
     RootResponse:
@@ -339,3 +406,26 @@ components:
           type: integer
         failed_count:
           type: integer
+    GitHubSearchResult:
+      type: object
+      properties:
+        full_name:
+          type: string
+        owner:
+          type: string
+        repo:
+          type: string
+        description:
+          type: string
+          nullable: true
+        html_url:
+          type: string
+        language:
+          type: string
+          nullable: true
+        stargazers_count:
+          type: integer
+        topics:
+          type: array
+          items:
+            type: string

@@ -36,8 +36,17 @@ dist/
 # Local data and logs
 .pytest_cache/
 .coverage
-mlruns/
-lineage.log
+htmlcov/
+data/
 
 # Documentation build output
 site/
+
+# Node
+ui/node_modules
+ui/.vite
+
+# Agent and session files
+.agent/
+.codex/
+session_logs/

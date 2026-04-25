@@ -1,5 +1,6 @@
 import type {
   CreateTrackedRepoInput,
+  GitHubSearchResponse,
   RepoDetail,
   RepoListResponse,
   RootResponse,
@@ -80,4 +81,18 @@ export function updateTrackedRepo(
 
 export function deleteTrackedRepo(repoId: string) {
   return apiFetch<void>(`/api/tracked-repos/${repoId}`, { method: "DELETE" });
+}
+
+export async function searchGitHubRepos(query: string, limit = 10) {
+  const payload = await apiFetch<GitHubSearchResponse>(
+    `/api/github/search?q=${encodeURIComponent(query)}&per_page=${limit}`,
+  );
+  return payload.results;
+}
+
+export async function listUserRepos(username: string, limit = 30) {
+  const payload = await apiFetch<GitHubSearchResponse>(
+    `/api/github/user-repos?username=${encodeURIComponent(username)}&per_page=${limit}`,
+  );
+  return payload.results;
 }

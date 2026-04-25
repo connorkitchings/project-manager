@@ -1,49 +1,48 @@
-# Stage 1: Builder
-# This stage installs all dependencies, including dev dependencies, to create a build environment.
-FROM python:3.11-slim as builder
+# Stage 1: Frontend build
+FROM node:20-slim AS frontend
 
-# Install uv, the package manager
+WORKDIR /app/ui
+
+COPY ui/package.json ui/package-lock.json ./
+RUN npm ci
+
+COPY ui/ ./
+RUN npm run build
+
+# Stage 2: Python builder
+FROM python:3.11-slim AS builder
+
 RUN pip install uv
 
-# Set the working directory
 WORKDIR /app
 
-# Copy project files
 COPY pyproject.toml uv.lock* ./
 COPY src/ src/
 
-# Install all dependencies, including development extras, into a virtual environment
-# This creates a self-contained environment that we can copy to the next stage.
-RUN uv venv
-RUN . .venv/bin/activate && uv sync --all-extras
+RUN uv venv && . .venv/bin/activate && uv sync --no-dev
 
-# Stage 2: Runtime
-# This is the final, lean image for production.
-FROM python:3.11-slim as runtime
+# Stage 3: Runtime
+FROM python:3.11-slim AS runtime
 
-# Set the working directory
 WORKDIR /app
 
-# Create a non-root user for security
 RUN useradd --create-home --shell /bin/bash appuser
 
-# Copy the virtual environment with all its dependencies from the builder stage
 COPY --from=builder /app/.venv ./.venv
-
-# Copy the application source code
 COPY src/ src/
+COPY config/ config/
+COPY --from=frontend /app/ui/dist ui/dist
 
-# Chown the directory to the new user
-RUN chown -R appuser:appuser /app
+RUN mkdir -p data && chown -R appuser:appuser /app
 
-# Switch to the non-root user
 USER appuser
 
-# Add the virtual environment's bin to the PATH
 ENV PATH="/app/.venv/bin:$PATH"
+ENV PORT=8000
 
-# Expose a default port (if the application were a web service)
-# EXPOSE 8000
+EXPOSE 8000
 
-# Set a default command to run when the container starts
-CMD ["python", "-c", "print('Welcome to the Vibe Coding container!')"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/meta')" || exit 1
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--threads", "4", "project_manager.api.main:app"]

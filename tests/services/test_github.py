@@ -248,3 +248,95 @@ def test_get_recent_activity_last_activity_at_is_max_timestamp(client):
 
     expected = datetime(2026, 4, 22, 10, 0, 0, tzinfo=timezone.utc)
     assert activity.last_activity_at == expected
+
+
+# ---------------------------------------------------------------------------
+# search_repositories()
+# ---------------------------------------------------------------------------
+
+
+def test_search_repositories_returns_results(client):
+    payload = {
+        "items": [
+            {
+                "full_name": "connorkitchings/project-manager",
+                "description": "A status dashboard",
+                "html_url": "https://github.com/connorkitchings/project-manager",
+                "language": "Python",
+                "stargazers_count": 5,
+                "topics": ["flask", "react"],
+            },
+            {
+                "full_name": "other/repo",
+                "description": None,
+                "html_url": "https://github.com/other/repo",
+                "language": "TypeScript",
+                "stargazers_count": 0,
+                "topics": [],
+            },
+        ]
+    }
+    mock_resp = make_response(200, payload)
+    with patch.object(client.session, "request", return_value=mock_resp):
+        results = client.search_repositories("project-manager", limit=10)
+    assert len(results) == 2
+    assert results[0].full_name == "connorkitchings/project-manager"
+    assert results[0].owner == "connorkitchings"
+    assert results[0].repo == "project-manager"
+    assert results[0].language == "Python"
+    assert results[0].stargazers_count == 5
+    assert results[0].topics == ["flask", "react"]
+    assert results[1].description is None
+
+
+def test_search_repositories_empty_results(client):
+    mock_resp = make_response(200, {"items": []})
+    with patch.object(client.session, "request", return_value=mock_resp):
+        results = client.search_repositories("nonexistent-query-xyz")
+    assert results == []
+
+
+def test_search_repositories_raises_on_api_error(client):
+    mock_resp = make_response(500, {"message": "Internal Server Error"})
+    with patch.object(client.session, "request", return_value=mock_resp):
+        with pytest.raises(GitHubAPIError):
+            client.search_repositories("test")
+
+
+# ---------------------------------------------------------------------------
+# list_user_repos()
+# ---------------------------------------------------------------------------
+
+
+def test_list_user_repos_returns_results(client):
+    payload = [
+        {
+            "full_name": "connorkitchings/project-manager",
+            "description": "A status dashboard",
+            "html_url": "https://github.com/connorkitchings/project-manager",
+            "language": "Python",
+            "stargazers_count": 5,
+            "topics": ["flask"],
+        },
+    ]
+    mock_resp = make_response(200, payload)
+    with patch.object(client.session, "request", return_value=mock_resp):
+        results = client.list_user_repos("connorkitchings", limit=10)
+    assert len(results) == 1
+    assert results[0].full_name == "connorkitchings/project-manager"
+    assert results[0].owner == "connorkitchings"
+    assert results[0].repo == "project-manager"
+
+
+def test_list_user_repos_empty(client):
+    mock_resp = make_response(200, [])
+    with patch.object(client.session, "request", return_value=mock_resp):
+        results = client.list_user_repos("nonexistent-user-xyz")
+    assert results == []
+
+
+def test_list_user_repos_raises_on_api_error(client):
+    mock_resp = make_response(404, {"message": "Not Found"})
+    with patch.object(client.session, "request", return_value=mock_resp):
+        with pytest.raises(GitHubAPIError):
+            client.list_user_repos("nonexistent")

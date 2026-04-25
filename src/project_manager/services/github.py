@@ -9,7 +9,11 @@ from typing import Any
 import requests
 
 from project_manager.core.settings import Settings
-from project_manager.models import GitHubActivity, GitHubEvent
+from project_manager.models import (
+    GitHubActivity,
+    GitHubEvent,
+    GitHubSearchResult,
+)
 
 
 class GitHubAPIError(RuntimeError):
@@ -203,3 +207,68 @@ class GitHubClient:
             issues=issues,
             last_activity_at=last_activity_at,
         )
+
+    def search_repositories(
+        self, query: str, *, limit: int = 10
+    ) -> list[GitHubSearchResult]:
+        """Search GitHub repositories by query string."""
+        response = self._request(
+            "GET",
+            "/search/repositories",
+            params={"q": query, "per_page": min(limit, 30)},
+        )
+        assert response is not None
+        payload = response.json()
+        results: list[GitHubSearchResult] = []
+        for item in payload.get("items", []):
+            full_name = item.get("full_name", "")
+            parts = full_name.split("/", 1)
+            owner = parts[0] if len(parts) == 2 else ""
+            repo = parts[1] if len(parts) == 2 else full_name
+            results.append(
+                GitHubSearchResult(
+                    full_name=full_name,
+                    owner=owner,
+                    repo=repo,
+                    description=item.get("description"),
+                    html_url=item.get("html_url", ""),
+                    language=item.get("language"),
+                    stargazers_count=item.get("stargazers_count", 0),
+                    topics=item.get("topics", []),
+                )
+            )
+        return results
+
+    def list_user_repos(
+        self, username: str, *, limit: int = 30
+    ) -> list[GitHubSearchResult]:
+        """List public repositories for a GitHub user, sorted by updated desc."""
+        response = self._request(
+            "GET",
+            f"/users/{username}/repos",
+            params={
+                "sort": "updated",
+                "direction": "desc",
+                "per_page": min(limit, 100),
+            },
+        )
+        assert response is not None
+        results: list[GitHubSearchResult] = []
+        for item in response.json():
+            full_name = item.get("full_name", "")
+            parts = full_name.split("/", 1)
+            owner = parts[0] if len(parts) == 2 else ""
+            repo_name = parts[1] if len(parts) == 2 else full_name
+            results.append(
+                GitHubSearchResult(
+                    full_name=full_name,
+                    owner=owner,
+                    repo=repo_name,
+                    description=item.get("description"),
+                    html_url=item.get("html_url", ""),
+                    language=item.get("language"),
+                    stargazers_count=item.get("stargazers_count", 0),
+                    topics=item.get("topics", []),
+                )
+            )
+        return results

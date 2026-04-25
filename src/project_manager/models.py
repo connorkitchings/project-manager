@@ -19,6 +19,32 @@ class RepoStatus(str, Enum):
     unknown = "unknown"
 
 
+@dataclass(slots=True)
+class GitHubSearchResult:
+    """Lightweight result from a GitHub repository search."""
+
+    full_name: str
+    owner: str
+    repo: str
+    description: str | None = None
+    html_url: str = ""
+    language: str | None = None
+    stargazers_count: int = 0
+    topics: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict:
+        return {
+            "full_name": self.full_name,
+            "owner": self.owner,
+            "repo": self.repo,
+            "description": self.description,
+            "html_url": self.html_url,
+            "language": self.language,
+            "stargazers_count": self.stargazers_count,
+            "topics": self.topics,
+        }
+
+
 def _serialize_datetime(value: datetime | None) -> str | None:
     """Serialize datetimes for JSON responses."""
     return value.isoformat() if value else None

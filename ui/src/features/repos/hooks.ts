@@ -11,6 +11,8 @@ import {
   fetchRepo,
   fetchRepos,
   fetchTrackedRepos,
+  listUserRepos,
+  searchGitHubRepos,
   syncRepos,
   updateTrackedRepo,
 } from "@/lib/api/client";
@@ -114,5 +116,23 @@ export function useDeleteTrackedRepo() {
         queryClient.invalidateQueries({ queryKey: queryKeys.repos }),
       ]);
     },
+  });
+}
+
+export function useGitHubSearch(query: string) {
+  return useQuery({
+    queryKey: ["github-search", query],
+    queryFn: () => searchGitHubRepos(query),
+    enabled: query.trim().length >= 2,
+    staleTime: 60_000,
+  });
+}
+
+export function useUserRepos(username: string) {
+  return useQuery({
+    queryKey: ["github-user-repos", username],
+    queryFn: () => listUserRepos(username),
+    enabled: username.trim().length >= 1,
+    staleTime: 60_000,
   });
 }
