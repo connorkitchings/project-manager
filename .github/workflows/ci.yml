@@ -137,4 +137,4 @@ jobs:
       run: uv sync
 
     - name: Build docs
-      run: uv run --extra dev mkdocs build
+      run: uv run --group dev mkdocs build
